@@ -32,6 +32,7 @@ class AuthController extends Controller
             'institute_name' => 'required|string',
             'course' => 'required|string',
             'city' => 'required|string',
+            'firebase_id' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -41,15 +42,18 @@ class AuthController extends Controller
             ], 200);
         }
 
+        // creating new user.
         $request['password'] = Hash::make($request->password);
-        $user = request(['name', 'email','password', 'age', 'role', 'looking_for', 'gender']);
+        $user = request(['name', 'email','password', 'age', 'role', 'looking_for', 'gender', 'firebase_id']);
 
         $user = User::create($user);
         
+        // institute details
         $institute = Institute::create([
             'name' => request('institute_name')
         ]);
 
+        // education details
         $edu = request(['course', 'city']);
         $edu['user_id'] = $user->id;
         $edu['institute_id'] = $institute->id; 

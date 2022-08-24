@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('gender');
             $table->string('role');
             $table->string('looking_for');
+            $table->string('firebase_id');
             $table->string('bio')->nullable();
             $table->string('pictures')->nullable();
             $table->string('skills')->nullable();
@@ -40,6 +41,7 @@ return new class extends Migration
             $table->dropColumn('gender');
             $table->dropColumn('role');
             $table->dropColumn('looking_for');
+            $table->dropColumn('firebase_id');
             $table->dropColumn('bio')->nullable()->default(null);
             $table->dropColumn('pictures')->nullable()->change();
             $table->dropColumn('skills')->nullable()->default(null);
