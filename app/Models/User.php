@@ -25,7 +25,7 @@ class User extends Authenticatable
         "role",
         "looking_for",
         "gender",
-        "bio"
+        "firebase_id"
     ];
 
     /**

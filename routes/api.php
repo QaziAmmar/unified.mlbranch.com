@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Middleware\JsonResponseMiddleware;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +31,11 @@ Route::group([
     # code...
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/generate_otp', [ForgotPasswordController::class, 'generate_otp']);
+    Route::post('/verify_otp', [ForgotPasswordController::class, 'verify_otp']);
+    
 });
+
 
 
 

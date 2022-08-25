@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Collection;
+
+
 
 class AuthController extends Controller
 {
@@ -20,7 +23,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|unique:users',
@@ -37,17 +40,17 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Unauthorize', 
+                'message' => 'Unable to create the user',
                 'data' => $validator->errors()
             ], 200);
         }
 
         // creating new user.
         $request['password'] = Hash::make($request->password);
-        $user = request(['name', 'email','password', 'age', 'role', 'looking_for', 'gender', 'firebase_id']);
+        $user = request(['name', 'email', 'password', 'age', 'role', 'looking_for', 'gender', 'firebase_id']);
 
         $user = User::create($user);
-        
+
         // institute details
         $institute = Institute::create([
             'name' => request('institute_name')
@@ -56,18 +59,17 @@ class AuthController extends Controller
         // education details
         $edu = request(['course', 'city']);
         $edu['user_id'] = $user->id;
-        $edu['institute_id'] = $institute->id; 
+        $edu['institute_id'] = $institute->id;
         $edu = Education::create($edu);
-        
+
         $data = [
-            'message' => 'User created successfully', 
+            'message' => 'User created successfully',
             'data' => [
                 'user' => $user
             ]
         ];
 
         return response($data, 200);
-
     }
 
     public function login(Request $request)
@@ -81,7 +83,7 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Unauthorize', 
+                'message' => 'Unauthorize',
                 'data' => $validator->errors()
             ], 200);
         }
@@ -89,23 +91,30 @@ class AuthController extends Controller
         // fetching 
         $credentials = request(['email', 'password']);
         // check user in database
-        if (!Auth::attempt($credentials)){
+        if (!Auth::attempt($credentials)) {
 
             $data = [
-                'message' => 'Email or Password is in correct', 
+                'message' => 'Email or Password is in correct',
                 'data' => (object)[]
             ];
 
-             return response()->json($data, 401);
+            return response()->json($data, 401);
         }
 
+
         // fetch the user and return it back.
-        return response()->json([
+
+        $user = Auth::user();
+        array_walk_recursive($user, function (&$item, $key) {
+            $item = null === $item ? '' : $item;
+        });
+
+        $data = [
             'message' => 'Login successful',
             'data' => [
-                'user' => Auth::user()
+                'user' => $user
             ]
-        ]);
-
-    } 
+        ];
+        return response()->json($data, 200);
+    }
 }

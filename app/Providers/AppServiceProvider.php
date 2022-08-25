@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+
 
 
 class AppServiceProvider extends ServiceProvider
@@ -27,5 +29,15 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Schema::defaultStringLength(190);
+
+        Response::macro('dropNull', function ($value) {
+            return "ammar";
+        });
+
+
     }
+
+
+  
+
 }
