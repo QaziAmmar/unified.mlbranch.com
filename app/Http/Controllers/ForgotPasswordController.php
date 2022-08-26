@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class ForgotPasswordController extends Controller
@@ -67,14 +68,14 @@ class ForgotPasswordController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Unable to verify OTP',
+                'message' => 'Error: incorrect or missing parameters',
+                'status' => false,
                 'data' => $validator->errors()
             ], 401);
         }
 
 
         // fetching email from user
-
         $user = DB::table('users')->where('email', request('email'))
             ->where('email_code', request('otp'))->first();
 
@@ -108,5 +109,47 @@ class ForgotPasswordController extends Controller
         }
     }
 
+    public function create_password(Request $request)
+    {
+        # code...
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'password' => 'required|string|min:6'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Input Field Error',
+                'data' => $validator->errors()
+            ], 401);
+        }
+
+        $user = User::find(request('user_id'));
+        
+
+        if($user != null) {
+            
+            // update the user password in database.
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            $data = [
+                'message' => 'Password updated successfully',
+                'status' => true,
+                'data' => (object)[]
+            ];
+
+            return response()->json($data, 200);
+
+        } else {
+            $data = [
+                'message' => 'User not found',
+                'status' => false,
+                'data' => (object)[]
+            ];
+
+            return response()->json($data, 401);
+        }
+    }
    
 }

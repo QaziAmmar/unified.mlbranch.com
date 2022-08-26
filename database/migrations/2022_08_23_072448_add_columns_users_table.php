@@ -21,19 +21,19 @@ return new class extends Migration
             $table->string('looking_for');
             $table->string('firebase_id');
 
-            $table->string('status', 32)->default(1);
-            $table->string('g_token', 32)->default('');
-            $table->string('fb_token', 32)->default('');
-            $table->string('apl_token', 32)->default('');
-            $table->string('lat', 32)->default('');
-            $table->string('long', 32)->default('');
-            $table->string('email_code', 32)->default('');
-            $table->string('device_id', 32)->default('');
+            $table->string('status', 255)->default(1);
+            $table->string('g_token', 255)->default('');
+            $table->string('fb_token', 255)->default('');
+            $table->string('apl_token', 255)->default('');
+            $table->string('lat', 255)->default('');
+            $table->string('long', 255)->default('');
+            $table->string('email_code', 255)->default('');
+            $table->string('device_id', 255)->default('');
 
-            $table->string('bio', 32)->default('');
-            $table->string('pictures', 32)->default('');
-            $table->string('skills', 32)->default('');
-            $table->string('interstes', 32)->default('');
+            $table->string('bio', 255)->default('');
+            $table->json('pictures')->default("[]");
+            $table->json('skills')->default("[]");
+            $table->json('interstes')->default("[]");
         });
     }
 
@@ -53,14 +53,14 @@ return new class extends Migration
             $table->dropColumn('looking_for');
             $table->dropColumn('firebase_id');
             
-            $table->dropColumn('status', 32);
-            $table->dropColumn('g_token', 32);
-            $table->dropColumn('fb_token', 32);
-            $table->dropColumn('apl_token', 32);
-            $table->dropColumn('lat', 32);
-            $table->dropColumn('long', 32);
-            $table->dropColumn('email_code', 32);
-            $table->dropColumn('device_id', 32);
+            $table->dropColumn('status');
+            $table->dropColumn('g_token');
+            $table->dropColumn('fb_token');
+            $table->dropColumn('apl_token');
+            $table->dropColumn('lat');
+            $table->dropColumn('long');
+            $table->dropColumn('email_code');
+            $table->dropColumn('device_id');
 
             $table->dropColumn('bio');
             $table->dropColumn('pictures');
