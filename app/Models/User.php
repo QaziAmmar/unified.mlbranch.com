@@ -49,6 +49,5 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'skills' => 'array',
         'interstes' => 'array',
-        'pictures' => 'array'
     ];
 }

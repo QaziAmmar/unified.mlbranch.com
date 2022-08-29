@@ -50,6 +50,9 @@ Route::group([
     
     Route::post('/interst', [EditProfileController::class, 'interest']);
     Route::post('/interest_delete', [EditProfileController::class, 'interest_delete']);
+    // update user profile image
+    Route::put('/edit_profile_image', [EditProfileController::class, 'edit_profile_image']);
+    Route::post('/add_profile_sub_images', [EditProfileController::class, 'add_profile_sub_images']);
 
 });
 
