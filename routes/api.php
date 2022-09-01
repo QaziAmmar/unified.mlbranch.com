@@ -53,6 +53,11 @@ Route::group([
     // update user profile image
     Route::put('/edit_profile_image', [EditProfileController::class, 'edit_profile_image']);
     Route::post('/add_profile_sub_images', [EditProfileController::class, 'add_profile_sub_images']);
+    // add user education
+    Route::post('/add_education', [EditProfileController::class, 'add_education']);
+    Route::post('/delete_education', [EditProfileController::class, 'delete_education']);
+
+    Route::get('/test', [EditProfileController::class, 'test']);
 
 });
 

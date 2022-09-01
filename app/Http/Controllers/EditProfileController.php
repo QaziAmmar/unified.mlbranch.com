@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Education;
+use App\Models\Institute;
 use App\Models\User;
 use App\Models\User_profile_images;
 use Illuminate\Http\Request;
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\File\File;
+use Illuminate\Support\Facades\DB;
 
 class EditProfileController extends Controller
 {
@@ -314,6 +317,7 @@ class EditProfileController extends Controller
         $fileData = base64_decode($base64File);
 
         $name = 'users_profile/' . Str::random(15) . '.png';
+        
         Storage::put('public/' . $name, $fileData);
         // update the user's profile_pic
         $user->profile_pic = $name;
@@ -388,6 +392,117 @@ class EditProfileController extends Controller
                 'profile_pic' => $profile_images
             ]
         ], 200);
+    }
+
+
+    public function add_education(Request $request)
+    {
+        # code...
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'institute_id' => 'required',
+            'course' => 'required|',
+            'city' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+          return $this->validationError($validator);
+        }
+
+        $user = User::find(request('user_id'));
+        // if no user found in database
+        if ($user == null) {
+            return $this->showError("User Not found");
+        }
+
+        $institute = Institute::find(request('institute_id'));
+        if ($institute == null) {
+            return  $this->showError("Institute not found");
+        }
+
+        // education details
+        $edu = request(['institute_id', 'course', 'city']);
+        $edu['user_id'] = $user->id;
+
+        $edu = Education::create($edu);
+        $edu['institute_name'] = $institute->name;
+        
+        $data = [
+            'message' => 'Education added successfully',
+            'status' => true,
+            'data' => [
+                'user' => $edu
+            ]
+        ];
+
+        return response($data, 200);
+
+
+    }
+
+    public function delete_education(Request $request)
+    {
+        # code...
+
+        $validator = Validator::make($request->all(), [
+            'education_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+           return $this->validationError($validator);
+        }
+
+
+        // education details
+        $edu_id = request('education_id');
+        
+        $edu = Education::where('id', $edu_id)->delete();
+        
+        $data = [
+            'message' => 'Education deleted successfully',
+            'status' => true,
+            'data' => (object)[]
+        ];
+
+        return response($data, 200);
+
+    }
+
+
+    public function test()
+    {
+      
+        # code...
+
+        $user = User::find("1");
+        echo $user->profile_pic;
+        // dd($user);
+        
+
+    }
+
+
+    public function showError($message)
+    {
+        # code...
+        $data = [
+            'message' => $message,
+            'status' => false,
+            'data' => (object)[]
+        ];
+
+        return response()->json($data, 401);
+    }
+
+    public function validationError($validator)
+    {
+        # code...
+        return response()->json([
+            'message' => 'Error: Incorrect or missing parameters',
+            'status' => false,
+            'data' => $validator->errors()
+        ], 401);
     }
 
 }

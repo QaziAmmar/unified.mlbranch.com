@@ -26,7 +26,8 @@ class User extends Authenticatable
         "role",
         "looking_for",
         "gender",
-        "firebase_id"
+        "firebase_id",
+        "profile_pic"
     ];
 
     /**
@@ -40,6 +41,8 @@ class User extends Authenticatable
         'bio'
     ];
 
+    
+
     /**
      * The attributes that should be cast.
      *
@@ -50,4 +53,10 @@ class User extends Authenticatable
         'skills' => 'array',
         'interstes' => 'array',
     ];
+
+    public function getProfilePicAttribute($value)
+    {
+        $value = asset('storage/'.$value);
+        return $value;
+    }
 }

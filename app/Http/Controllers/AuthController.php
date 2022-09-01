@@ -10,8 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
-
-
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -103,11 +102,20 @@ class AuthController extends Controller
 
 
         // fetch the user and return it back.
+          
 
         $user = Auth::user();
         array_walk_recursive($user, function (&$item, $key) {
             $item = null === $item ? '' : $item;
         });
+
+        // append education with user
+        $edu = Education::where('user_id', $user->id)->get();
+        if ($edu == null ){
+            $edu = [];
+        }
+
+        $user['education'] = $edu;
 
         $data = [
             'message' => 'Login successful',
