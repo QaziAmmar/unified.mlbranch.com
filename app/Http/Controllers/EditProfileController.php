@@ -7,12 +7,10 @@ use App\Models\Institute;
 use App\Models\User;
 use App\Models\User_profile_images;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\File\File;
-use Illuminate\Support\Facades\DB;
+
 
 class EditProfileController extends Controller
 {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Middleware\JsonResponseMiddleware;
@@ -58,6 +59,16 @@ Route::group([
     Route::post('/delete_education', [EditProfileController::class, 'delete_education']);
 
     Route::get('/test', [EditProfileController::class, 'test']);
+
+});
+
+
+Route::group([
+    'prefix' => 'business'
+], function ()
+{
+    # code...
+    Route::post('/create', [BusinessController::class, 'create']);
 
 });
 
