@@ -33,7 +33,7 @@ class EmailListController extends Controller
         if ($user != null) {
             return response()->json([
                 'status' => true,
-            ], 401);
+            ], 200);
         }
 
         
