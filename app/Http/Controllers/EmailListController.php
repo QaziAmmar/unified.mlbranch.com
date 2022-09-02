@@ -32,9 +32,7 @@ class EmailListController extends Controller
 
         if ($user != null) {
             return response()->json([
-                'message' => 'Email Added successfully',
                 'status' => true,
-                'data' => (object)[]
             ], 401);
         }
 
