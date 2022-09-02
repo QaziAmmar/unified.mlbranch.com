@@ -3,8 +3,10 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\EditProfileController;
+use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Middleware\JsonResponseMiddleware;
+use App\Models\EmailList;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +73,11 @@ Route::group([
     Route::post('/create', [BusinessController::class, 'create']);
 
 });
+
+
+
+ # code...
+ Route::post('/email_list', [EmailListController::class, 'email_list']);
 
 
 
