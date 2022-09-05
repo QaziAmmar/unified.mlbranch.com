@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -120,6 +121,7 @@ class ForgotPasswordController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Input Field Error',
+                'status' => false,
                 'data' => $validator->errors()
             ], 401);
         }

@@ -40,8 +40,9 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Unable to create the user',
+                'status' => false,
                 'data' => $validator->errors()
-            ], 200);
+            ], 401);
         }
 
         // creating new user.
@@ -63,6 +64,7 @@ class AuthController extends Controller
 
         $data = [
             'message' => 'User created successfully',
+            'status' => true,
             'data' => [
                 'user' => $user
             ]
@@ -94,6 +96,7 @@ class AuthController extends Controller
 
             $data = [
                 'message' => 'Email or Password is in correct',
+                'status' => false,
                 'data' => (object)[]
             ];
 
@@ -110,7 +113,7 @@ class AuthController extends Controller
         });
 
         // append education with user
-        $edu = Education::where('user_id', $user->id)->get();
+        $edu = Education::where('user_id', $user->id)->first();
         if ($edu == null ){
             $edu = [];
         }
@@ -119,6 +122,7 @@ class AuthController extends Controller
 
         $data = [
             'message' => 'Login successful',
+            'status' => true,
             'data' => [
                 'user' => $user
             ]

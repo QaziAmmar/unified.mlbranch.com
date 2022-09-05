@@ -5,6 +5,7 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ProductController;
 use App\Http\Middleware\JsonResponseMiddleware;
 use App\Models\EmailList;
 use App\Models\Post;
@@ -55,7 +56,9 @@ Route::group([
     Route::post('/interest_delete', [EditProfileController::class, 'interest_delete']);
     // update user profile image
     Route::put('/edit_profile_image', [EditProfileController::class, 'edit_profile_image']);
+    // profile sub images.
     Route::post('/add_profile_sub_images', [EditProfileController::class, 'add_profile_sub_images']);
+    Route::post('/delete_profile_sub_images', [EditProfileController::class, 'delete_profile_sub_images']);
     // add user education
     Route::post('/add_education', [EditProfileController::class, 'add_education']);
     Route::post('/delete_education', [EditProfileController::class, 'delete_education']);
@@ -71,8 +74,27 @@ Route::group([
 {
     # code...
     Route::post('/create', [BusinessController::class, 'create']);
+    Route::get('/show/{user_id}', [BusinessController::class, 'show']);
+    Route::put('/update', [BusinessController::class, 'update']);
+
+    Route::post('/add_external_link', [BusinessController::class, 'add_external_link']);
+    Route::post('/delete_external_link', [BusinessController::class, 'delete_external_link']);
 
 });
+
+
+Route::group([
+    'prefix' => 'product'
+], function ()
+{
+    # code...
+    Route::post('/create', [ProductController::class, 'create']);
+    Route::get('/show_by_product_id/{product_id}', [ProductController::class, 'show_by_product_id']);
+    Route::get('/show_by_business_id/{business_id}', [ProductController::class, 'show_by_business_id']);
+
+
+});
+
 
 
 

@@ -315,7 +315,7 @@ class EditProfileController extends Controller
         $fileData = base64_decode($base64File);
 
         $name = 'users_profile/' . Str::random(15) . '.png';
-        
+
         Storage::put('public/' . $name, $fileData);
         // update the user's profile_pic
         $user->profile_pic = $name;
@@ -330,6 +330,8 @@ class EditProfileController extends Controller
         ], 200);
     }
 
+    // add profile multiple images
+
     public function add_profile_sub_images(Request $request)
     {
         # code...
@@ -340,11 +342,7 @@ class EditProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error: Incorrect or missing parameters',
-                'status' => false,
-                'data' => $validator->errors()
-            ], 401);
+            return $this->validationError($validator);
         }
 
         $user = User::find(request('user_id'));
@@ -369,7 +367,6 @@ class EditProfileController extends Controller
             $fileData = base64_decode($base64pic);
             $name = 'users_sub_profile/' . Str::random(15) . '.png';
             Storage::put('public/' . $name, $fileData);
-            
 
             $profile_image = [
                 "user_id" => $user->id,
@@ -392,7 +389,29 @@ class EditProfileController extends Controller
         ], 200);
     }
 
+    public function delete_profile_sub_images(Request $request)
+    {
+        # code...
 
+        $validator = Validator::make($request->all(), [
+            'image_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+        User_profile_images::where('id', request('image_id'))->delete();
+
+        // append URL with each profile Image
+        //return a response as json assuming you are building a restful API 
+        return response()->json([
+            'message' => 'Profile sub picture deleted',
+            'status' => true,
+            'data' => (object)[]
+        ], 200);
+    }
+    // add user education.
     public function add_education(Request $request)
     {
         # code...
@@ -405,7 +424,7 @@ class EditProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-          return $this->validationError($validator);
+            return $this->validationError($validator);
         }
 
         $user = User::find(request('user_id'));
@@ -420,23 +439,31 @@ class EditProfileController extends Controller
         }
 
         // education details
-        $edu = request(['institute_id', 'course', 'city']);
-        $edu['user_id'] = $user->id;
+        $edu = Education::where('user_id', $user->id)->first();
 
-        $edu = Education::create($edu);
-        $edu['institute_name'] = $institute->name;
-        
+        if ($edu == null) {
+            // create new record in database
+            $edu = request(['institute_id', 'course', 'city']);
+            $edu['user_id'] = $user->id;
+            $edu = Education::create($edu);
+            $message = 'Education added successfully';
+        } else {
+            // update the existing record.
+            $edu->institute_id = request('institute_id');
+            $edu->course = request('course');
+            $edu->city = request('city');
+            $edu->save();
+            $message = 'Education updated successfully';
+            
+        }
+
         $data = [
-            'message' => 'Education added successfully',
+            'message' => $message,
             'status' => true,
-            'data' => [
-                'user' => $edu
-            ]
+            'data' => $edu
         ];
 
         return response($data, 200);
-
-
     }
 
     public function delete_education(Request $request)
@@ -448,15 +475,15 @@ class EditProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-           return $this->validationError($validator);
+            return $this->validationError($validator);
         }
 
 
         // education details
         $edu_id = request('education_id');
-        
+
         $edu = Education::where('id', $edu_id)->delete();
-        
+
         $data = [
             'message' => 'Education deleted successfully',
             'status' => true,
@@ -464,19 +491,18 @@ class EditProfileController extends Controller
         ];
 
         return response($data, 200);
-
     }
 
 
     public function test()
     {
-      
+
         # code...
 
         $user = User::find("1");
         echo $user->profile_pic;
         // dd($user);
-        
+
 
     }
 
@@ -502,5 +528,4 @@ class EditProfileController extends Controller
             'data' => $validator->errors()
         ], 401);
     }
-
 }
