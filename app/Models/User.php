@@ -27,7 +27,8 @@ class User extends Authenticatable
         "looking_for",
         "gender",
         "firebase_id",
-        "profile_pic"
+        "profile_pic",
+        "bio"
     ];
 
     /**
@@ -38,7 +39,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'bio'
     ];
 
     

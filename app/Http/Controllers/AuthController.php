@@ -7,6 +7,7 @@ use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\User_profile_images;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Collection;
@@ -113,12 +114,8 @@ class AuthController extends Controller
         });
 
         // append education with user
-        $edu = Education::where('user_id', $user->id)->first();
-        if ($edu == null ){
-            $edu = [];
-        }
-
-        $user['education'] = $edu;
+        $user['education'] = Education::where('user_id', $user->id)->first();
+        $user['sub_pictures'] = User_profile_images::where('user_id', $user->id)->get();
 
         $data = [
             'message' => 'Login successful',

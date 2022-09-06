@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductImagesController;
 use App\Models\BusinessExternalLinks;
 use App\Models\Product;
 use App\Models\ProductImages;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -32,8 +33,7 @@ class ProductController extends Controller
             'business_id' => 'required',
             'price' => 'required|string|',
             'title' => 'required|string|',
-            'description' => 'required|string|',
-            'product_images' => 'required'
+            'description' => 'required|string|'
         ]);
 
         if ($validator->fails()) {
@@ -68,6 +68,8 @@ class ProductController extends Controller
         if ($product == null) {
             return $this->general_error_with("No product found");
         } else {
+            $product_images = ProductImages::where('product_id', $product->id)->get();
+            $product['image'] = $product_images;
             return response()->json([
                 'message' => 'Product found successfully',
                 'status' => true,
@@ -79,8 +81,8 @@ class ProductController extends Controller
 
     public function show_by_business_id($business_id)
     {
-    
-        $products = Product::where('business_id', $business_id)->get();
+
+        $products = Product::where('business_id', $business_id)->with("post_images")->get();
 
         if (count($products) == 0) {
             return response()->json([

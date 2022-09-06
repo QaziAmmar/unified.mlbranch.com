@@ -15,4 +15,9 @@ class Education extends Model
         'course',
         'city'
     ];
+
+    protected $casts = [
+        'user_id' => 'integer',
+        'institute_id' => 'string'
+    ];
 }
