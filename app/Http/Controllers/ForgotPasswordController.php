@@ -77,9 +77,9 @@ class ForgotPasswordController extends Controller
 
 
         // fetching email from user
-        $user = DB::table('users')->where('email', request('email'))
-            ->where('email_code', request('otp'))->first();
 
+        $user = User::where('email', request('email'))
+        ->where('email_code', request('otp'))->first();
 
 
         if ($user != null) {

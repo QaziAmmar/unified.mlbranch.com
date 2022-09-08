@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('p_s_b_s', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id');
-            $table->string('title', 255)->default('');
-            $table->string('description', 255)->default('');
-            $table->timestamps();
+        //
+        Schema::table('businesses', function (Blueprint $table) {
+            //
+            $table->boolean('is_featured', 255)->default(false);
         });
     }
 
@@ -29,6 +27,11 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('p_s_b_s');
+        //
+
+        Schema::table('businesses', function (Blueprint $table) {
+            //
+            $table->dropColumn('is_featured');
+        });
     }
 };

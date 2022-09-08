@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Education;
 use App\Models\Institute;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -17,6 +18,7 @@ class AuthController extends Controller
 {
     /**
      * Store a newly created resource in storage.
+      Note: whenever a user is created a subscription entry is automatically created for that user.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -52,6 +54,11 @@ class AuthController extends Controller
 
         $user = User::create($user);
 
+        /**
+         As new user is created make a entry for its subscription
+         */
+        Subscription::create(['user_id' => $user->id]);
+        
         // institute details
         $institute = Institute::create([
             'name' => request('institute_name')

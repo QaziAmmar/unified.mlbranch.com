@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductImagesController;
 use App\Models\BusinessExternalLinks;
 use App\Models\Product;
 use App\Models\ProductImages;
+use App\Models\RecentProduct;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -59,9 +60,12 @@ class ProductController extends Controller
     }
 
 
-    public function show_by_product_id($product_id)
+    public function detail()
     {
-    
+        $user_id = request('user_id');
+        $product_id = request('product_id');
+
+        RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
 
         $product = Product::find($product_id);
 
@@ -79,8 +83,11 @@ class ProductController extends Controller
         
     }
 
-    public function show_by_business_id($business_id)
+    public function all_products()
     {
+
+        $user_id = request('user_id');
+        $business_id = request('business_id');
 
         $products = Product::where('business_id', $business_id)->with("post_images")->get();
 

@@ -6,6 +6,8 @@ use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PSBController;
+use App\Http\Controllers\ShopController;
 use App\Http\Middleware\JsonResponseMiddleware;
 use App\Models\EmailList;
 use App\Models\Post;
@@ -31,27 +33,24 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'auth'
-], function ()
-{
+], function () {
     # code...
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/generate_otp', [ForgotPasswordController::class, 'generate_otp']);
     Route::post('/verify_otp', [ForgotPasswordController::class, 'verify_otp']);
     Route::post('/create_password', [ForgotPasswordController::class, 'create_password']);
-    
 });
 
 Route::group([
     'prefix' => 'user'
-], function ()
-{
+], function () {
     # code...
     Route::put('/bio', [EditProfileController::class, 'bio']);
-    
+
     Route::post('/skill', [EditProfileController::class, 'skill']);
     Route::post('/skill_delete', [EditProfileController::class, 'skill_delete']);
-    
+
     Route::post('/interst', [EditProfileController::class, 'interest']);
     Route::post('/interest_delete', [EditProfileController::class, 'interest_delete']);
     // update user profile image
@@ -64,14 +63,12 @@ Route::group([
     Route::post('/delete_education', [EditProfileController::class, 'delete_education']);
 
     Route::get('/test', [EditProfileController::class, 'test']);
-
 });
 
 
 Route::group([
     'prefix' => 'business'
-], function ()
-{
+], function () {
     # code...
     Route::post('/create', [BusinessController::class, 'create']);
     Route::get('/show/{user_id}', [BusinessController::class, 'show']);
@@ -79,27 +76,37 @@ Route::group([
 
     Route::post('/add_external_link', [BusinessController::class, 'add_external_link']);
     Route::post('/delete_external_link', [BusinessController::class, 'delete_external_link']);
-
 });
 
 
 Route::group([
     'prefix' => 'product'
-], function ()
-{
+], function () {
     # code...
     Route::post('/create', [ProductController::class, 'create']);
-    Route::get('/show_by_product_id/{product_id}', [ProductController::class, 'show_by_product_id']);
-    Route::get('/show_by_business_id/{business_id}', [ProductController::class, 'show_by_business_id']);
+    Route::get('/detail', [ProductController::class, 'detail']);
+    Route::get('/all_products', [ProductController::class, 'all_products']);
+});
 
+Route::group([
+    'prefix' => 'psb'
+], function () {
+    Route::post('/create', [PSBController::class, 'create']);
+    Route::get('/detail', [PSBController::class, 'detail']);
+    Route::get('/all_psbs', [PSBController::class, 'all_psbs']);
+});
 
+Route::group([
+    'prefix' => 'shop'
+], function () {
+    Route::get('/detail', [ShopController::class, 'detail']);
 });
 
 
 
 
- # code...
- Route::post('/email_list', [EmailListController::class, 'email_list']);
+# code...
+Route::post('/email_list', [EmailListController::class, 'email_list']);
 
 
 

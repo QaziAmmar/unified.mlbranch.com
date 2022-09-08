@@ -9,6 +9,12 @@ class Business extends Model
 {
     use HasFactory;
 
+    public function post_products()
+    {
+        # code...
+        return $this->hasMany(Product::class);
+    }
+
     protected $fillable = [
         'user_id',
         'name',
