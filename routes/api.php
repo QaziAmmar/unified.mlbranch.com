@@ -8,6 +8,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PSBController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\JsonResponseMiddleware;
 use App\Models\EmailList;
 use App\Models\Post;
@@ -100,6 +101,14 @@ Route::group([
     'prefix' => 'shop'
 ], function () {
     Route::get('/detail', [ShopController::class, 'detail']);
+});
+
+Route::group([
+    'prefix' => 'subscription'
+], function () {
+    Route::post('/create', [SubscriptionController::class, 'create']);
+    Route::post('/unsubscribed', [SubscriptionController::class, 'unsubscribed']);
+    Route::get('/status', [SubscriptionController::class, 'status']);
 });
 
 

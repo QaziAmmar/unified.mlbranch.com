@@ -4,12 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Business;
-use App\Http\Controllers\ProductImagesController;
-use App\Models\BusinessExternalLinks;
 use App\Models\Product;
 use App\Models\ProductImages;
 use App\Models\RecentProduct;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;

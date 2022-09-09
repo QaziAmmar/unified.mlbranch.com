@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Subscription extends Model
+class SubscriptionHistory extends Model
 {
     use HasFactory;
 
@@ -25,4 +25,5 @@ class Subscription extends Model
     protected $casts = [
         'user_id' => 'integer',
     ];
+
 }

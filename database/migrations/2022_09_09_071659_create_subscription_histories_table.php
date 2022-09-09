@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('subscription_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
             $table->string('change_gender_filter', 255)->default('');
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('subscription_histories');
     }
 };
