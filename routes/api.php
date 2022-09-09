@@ -108,7 +108,7 @@ Route::group([
 ], function () {
     Route::post('/create', [SubscriptionController::class, 'create']);
     Route::post('/unsubscribed', [SubscriptionController::class, 'unsubscribed']);
-    Route::get('/status', [SubscriptionController::class, 'status']);
+    Route::get('/current_status', [SubscriptionController::class, 'current_status']);
 });
 
 

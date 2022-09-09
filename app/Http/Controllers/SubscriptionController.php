@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subscription;
 use App\Models\SubscriptionHistory;
+use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -44,6 +45,11 @@ class SubscriptionController extends Controller
 
         if ($validator->fails()) {
             return $this->validationError($validator);
+        }
+
+        $user = User::where('id', request('user_id'))->first();
+        if ($user == null) {
+          return $this->general_error_with("No user Found");
         }
 
         // here we need to check 2 conditions.
@@ -116,7 +122,7 @@ class SubscriptionController extends Controller
     /**
      * Unit function return the current status of subscription.
      */
-    public function status()
+    public function current_status()
     {
         # code...
         $validator = Validator::make(request()->all(), [
