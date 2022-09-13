@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('businesses', function (Blueprint $table) {
             //
-            $table->dateTime('featured_at');
+            $table->dateTime('featured_at')->useCurrent();
         });
     }
 
@@ -27,8 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('businesses', function (Blueprint $table) {
-            //
-            $table->dropIfExists('featured_at');
+            $table->dropColumn('featured_at');
         });
     }
 };
