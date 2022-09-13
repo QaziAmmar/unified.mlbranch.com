@@ -88,6 +88,9 @@ class BusinessController extends Controller
         // check if you have business subscription then you can create your business
 
         $business = Business::where('user_id', $user_id)->first();
+        if ($business == null) {
+            return $this->general_error_with("Business not found");
+        }
         $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
 
         if ($business == null) {
