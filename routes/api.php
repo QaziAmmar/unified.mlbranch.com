@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\ContactUSController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -115,11 +116,5 @@ Route::group([
 
 
 # code...
-Route::post('/email_list', [EmailListController::class, 'email_list']);
-
-
-
-
-// Route::get('/posts/{post}', [PostController::class, 'edit']);
-
-// Route::resource('posts', 'Banc')
+Route::post('email_list', [EmailListController::class, 'email_list']);
+Route::post('contact_us', [ContactUSController::class, 'contact_us']);
