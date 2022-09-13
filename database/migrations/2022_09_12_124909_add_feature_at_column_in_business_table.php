@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('businesses', function (Blueprint $table) {
             //
-            $table->timestamp('featured_at');
+            $table->dateTime('featured_at');
         });
     }
 
