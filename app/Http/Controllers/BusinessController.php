@@ -52,6 +52,9 @@ class BusinessController extends Controller
         }
 
         $subscription = Subscription::where('user_id', request('user_id'))->first();
+        if ($subscription == null) {
+            return $this->general_error_with("No user found against this ID");
+        }
         if ($subscription->create_business == '') {
             return $this->general_error_with("Please Subscribe before creating business");
         }
