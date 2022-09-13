@@ -63,7 +63,7 @@ Route::group([
     Route::post('/add_education', [EditProfileController::class, 'add_education']);
     Route::post('/delete_education', [EditProfileController::class, 'delete_education']);
 
-    Route::get('/test', [EditProfileController::class, 'test']);
+    Route::post('/test', [EditProfileController::class, 'test']);
 });
 
 
@@ -108,7 +108,7 @@ Route::group([
 ], function () {
     Route::post('/create', [SubscriptionController::class, 'create']);
     Route::post('/unsubscribed', [SubscriptionController::class, 'unsubscribed']);
-    Route::get('/current_status', [SubscriptionController::class, 'current_status']);
+    Route::get('/subscription_status', [SubscriptionController::class, 'subscription_status']);
 });
 
 

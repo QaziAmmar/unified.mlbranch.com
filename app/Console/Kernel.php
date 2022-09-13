@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use App\Models\Business;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -16,6 +18,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            $this->unfeature_business();
+        })->everyMinute();
     }
 
     /**
@@ -29,4 +34,16 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    public function unfeature_business()
+    {
+        # code...
+        
+        Business::where('is_featured', true)
+        ->whereDate('featured_at', '<', now()->subHours(24))
+        ->update(['is_featured' => false]);
+
+    }
+
+
 }

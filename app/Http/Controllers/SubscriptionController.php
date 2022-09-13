@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Business;
 use App\Models\Subscription;
 use App\Models\SubscriptionHistory;
 use App\Models\User;
@@ -59,7 +60,6 @@ class SubscriptionController extends Controller
         $subscription_status = $this->isSubscribed(request('user_id'));
 
         // check is subscribe already or not.
-
         if ($subscription_status['is_subscribed'] == true) {
            return $this->general_error_with("Already subscribed and expire at after " . $subscription_status['days']);
         }
@@ -78,6 +78,9 @@ class SubscriptionController extends Controller
             // make a history
         $subscription['user_id'] = request('user_id');
         $this->createHistory($subscription);
+
+        // After creating the History make changes the database on the base of purchased subscription
+        $this->update_business_and_products_by($subscription_);
 
         return response()->json([
             'message' => 'Subscription added successfully',
@@ -122,7 +125,7 @@ class SubscriptionController extends Controller
     /**
      * Unit function return the current status of subscription.
      */
-    public function current_status()
+    public function subscription_status()
     {
         # code...
         $validator = Validator::make(request()->all(), [
@@ -141,7 +144,6 @@ class SubscriptionController extends Controller
             'data' => $subscription_status['subscription']
         ], 200);
     }
-
     /**
      * Unit function that checks either user is subscribe or not with some other information
      */
@@ -163,7 +165,7 @@ class SubscriptionController extends Controller
         $days = (int) $this->days_count_from($subscription->updated_at);
         $is_subscribed = $subscription->status;
 
-        // check if days are in negative and you have some value in subscription colum it means that you already subscribed.
+        // check if days are in negative and you have some value in subscription table column it means that you already subscribed.
 
         $status['days'] = $days;
         if ($is_subscribed == false) {
@@ -176,7 +178,7 @@ class SubscriptionController extends Controller
             $status['is_subscribed'] = false;
             $status['message'] = "No current active subscription";
             $status['subscription'] = (object)[];
-            // call the function which will change you subscription status to false
+            // call the function which will change your subscription status to false
             $this->unsubscribe_by($user_id);
         }
         if (($days <= 0) &&  ($is_subscribed)) {
@@ -188,14 +190,78 @@ class SubscriptionController extends Controller
         return $status;
     }
 
+    /**
+     * This functuion runs after every one hour and check if you are featured then updated time
+     * is greated then 24 hourn then it will unsubscired you to featured.
+     */
+    public function subscription_service_routine($user_id)
+    {
+        # code...
+
+        $subscription = Subscription::where('user_id', $user_id)->first();
+
+        if ($subscription == null) {
+            $status['days'] = 0;
+            $status['subscription'] = (object)[];
+            $status['is_subscribed'] = false;
+            $status['message'] = "No user Found";
+            return $status;
+        }
+
+
+        $days = (int) $this->hours_count_from($subscription->updated_at);
+        $is_subscribed = $subscription->status;
+
+        // check if days are in negative and you have some value in subscription table column it means that you already subscribed.
+
+        $status['days'] = $days;
+        if ($is_subscribed == false) {
+            $status['is_subscribed'] = false;
+            $status['message'] = "No current active subscription";
+            $status['subscription'] = (object)[];
+        }
+        if (($days >= 0) &&  ($is_subscribed)) {
+            // agher din zyada ho gy hn or abi tk ap ka status active hai to us ko false kna ho ga.
+            $status['is_subscribed'] = false;
+            $status['message'] = "No current active subscription";
+            $status['subscription'] = (object)[];
+            // call the function which will change your subscription status to false
+            $this->unsubscribe_by($user_id);
+        }
+        if (($days <= 0) &&  ($is_subscribed)) {
+            $status['is_subscribed'] = true;
+            $status['message'] = "You have an active subsciption ends after " . $days;
+            $status['subscription'] = $subscription;
+        }
+
+        return $status;
+    }
+
+
     public function createHistory($subscription)
     {
         # code...
         SubscriptionHistory::create($subscription);
     }
 
+    public function update_business_and_products_by($subscription)
+    {
+        # code...
+        // if get_featured = set any value then make the business feature.
+        
+        $is_featured = false;
+        $featured_at = $subscription->featured_at;
+        if  ($subscription['get_featured'] != '') {
+            $is_featured = true;
+            $featured_at = now();
+        }
+        Business::where('user_id', $subscription['user_id'])
+            ->update(array('is_featured' => $is_featured,
+            'featured_at' => $featured_at));
+    }
+
     /**
-     * Unit Functions below
+     * Generic Unit Functions below
      */
 
     public function days_count_from($created_at)
@@ -212,6 +278,22 @@ class SubscriptionController extends Controller
         }
         return $days;
     }
+
+    public function hours_count_from($created_at)
+    {
+        # code...
+        $end_date = Carbon::parse($created_at)->addHour(1);
+        $current_date = new DateTime();
+        $interval = $current_date->diff($end_date);
+        $days = $interval->format('%a');
+        if ($end_date > $current_date) {
+            $days = "-" . $days;
+        } else {
+            $days = "+" . $days;
+        }
+        return $days;
+    }
+
 
     public function replace_zero_with_empty_string($subscription)
     {

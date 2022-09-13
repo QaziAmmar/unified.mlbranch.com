@@ -24,7 +24,9 @@ class Business extends Model
         "description",
         "bannar_img",
         "firebase_id",
-        "business_img"
+        "business_img",
+        "is_featured",
+        "featured_at"
         
     ];
 }

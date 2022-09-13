@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Business;
 use App\Models\Education;
 use App\Models\Institute;
 use App\Models\User;
@@ -498,12 +499,6 @@ class EditProfileController extends Controller
     {
 
         # code...
-
-        $user = User::find("1");
-        echo $user->profile_pic;
-        // dd($user);
-
-
     }
 
 

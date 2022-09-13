@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Business;
 use App\Models\Education;
 use App\Models\Institute;
 use App\Models\Subscription;
@@ -28,7 +29,7 @@ class AuthController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'email' => 'required|string|unique:users',
+            'email' => 'required|string|unique:users|email',
             'age' => 'required',
             'password' => 'required|string|min:6',
             'role' => 'required|string',
@@ -123,6 +124,7 @@ class AuthController extends Controller
         // append education with user
         $user['education'] = Education::where('user_id', $user->id)->first();
         $user['sub_pictures'] = User_profile_images::where('user_id', $user->id)->get();
+        $user['business_id'] = Business::where('user_id', $user->id)->first()['id'];
 
         $data = [
             'message' => 'Login successful',

@@ -55,8 +55,10 @@ class ShopController extends Controller
     public function feature_product()
     {
         # code...
+        // get the products that are featured.
         return Product::inRandomOrder()
-            ->limit(10)
+            ->where('is_featured', true)
+            ->limit(20)
             ->with("post_images")
             ->get();
     }
@@ -66,9 +68,15 @@ class ShopController extends Controller
     public function get_recent_product_of($user_id)
     {
         # code...
-        return  RecentProduct::where('user_id', $user_id)
-            ->groupBy('product_id')
-            ->limit(5)
-            ->get();
+        return Product::inRandomOrder()
+        ->orderBy('created_at', 'ASC')
+        ->limit(20)
+        ->get();
+
+
+        // return RecentProduct::where('user_id', $user_id)
+        //     ->groupBy('product_id')
+        //     ->limit(30)
+        //     ->get();
     }
 }

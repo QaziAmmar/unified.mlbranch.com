@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Business;
 use App\Models\BusinessExternalLinks;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -50,6 +51,11 @@ class BusinessController extends Controller
             return $this->general_error_with("Business is already register for this user");
         }
 
+        $subscription = Subscription::where('user_id', request('user_id'))->first();
+        if ($subscription->create_business == '') {
+            return $this->general_error_with("Please Subscribe before creating business");
+        }
+
         $business = request(['user_id', 'name', 'location_name', 'lat', 'long', 'description']);
         // convert the image into base 64 and save it into the folder.
         $business['bannar_img'] = $this->save_base64_image(request('bannar_img'));
@@ -76,13 +82,16 @@ class BusinessController extends Controller
     {
         //
         if ($user_id == null) {
-            $this->general_error_with("user_id is missing");
+            return $this->general_error_with("user_id is missing");
         }
 
+        // check if you have business subscription then you can create your business
+
         $business = Business::where('user_id', $user_id)->first();
+        $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
 
         if ($business == null) {
-            $this->general_error_with("Business not found against this user ID");
+            return $this->general_error_with("Business not found against this user ID");
         } else {
             return response()->json([
                 'message' => 'Business found successfully',
@@ -105,13 +114,13 @@ class BusinessController extends Controller
         # code...
         $validator = Validator::make($request->all(), [
             'business_id' => 'required',
-            'name' => 'required|string|',
-            'location_name' => 'required|string|',
-            'lat' => 'required|string|',
-            'long' => 'required|string|',
-            'description' => 'required|string|',
-            'bannar_img' => 'required|string|',
-            'business_img' => 'required|string|'
+            'name' => '|string',
+            'location_name' => '|string',
+            'lat' => '|string',
+            'long' => 'string|',
+            'description' => 'string|',
+            'bannar_img' => 'string|',
+            'business_img' => 'string|'
         ]);
 
         if ($validator->fails()) {
@@ -119,15 +128,11 @@ class BusinessController extends Controller
         }
 
         $business = Business::find(request('business_id'));
-
-
         // convert the image into base 64 and save it into the folder.
-        $date = request(['business_id', 'name', 'location_name', 'lat', 'long', 'description']);
-
-        $date['bannar_img'] = $this->save_base64_image(request('bannar_img'));
-        $date['business_img'] = $this->save_base64_image(request('business_img'));
-
-
+        $date = request(['business_id']);
+        // check which fields are set for update then only update those fields.
+        $date = $this->generate_date_for_update($date, $business);
+        // update the business
         $business->update($date);
 
         return response()->json([
@@ -137,6 +142,34 @@ class BusinessController extends Controller
         ], 200);
     }
 
+
+    public function generate_date_for_update($date, $business)
+    {
+        # code...
+        if (request('name') != null) {
+            $date['name'] = request('name');
+        }
+        if (request('location_name') != null) {
+            $date['location_name'] = request('location_name');
+        }
+        if (request('lat') != null) {
+            $date['lat'] = request('lat');
+        }
+        if (request('long') != null) {
+            $date['long'] = request('long');
+        }
+        if (request('description') != null) {
+            $date['description'] = request('description');
+        }
+        if (request('bannar_img') != null) {
+            $date['bannar_img'] = $this->save_base64_image(request('bannar_img'));
+        }
+        if (request('business_img') != null) {
+            $date['business_img'] = $this->save_base64_image(request('business_img'));
+        }
+
+        return $date;
+    }
 
     /**
      * Add the link first time when user is creating his business
@@ -150,7 +183,7 @@ class BusinessController extends Controller
             return [];
         }
         $save_external_links = [];
-        
+
         foreach ($external_links as $link) {
 
             $link['business_id'] = $business_id;
