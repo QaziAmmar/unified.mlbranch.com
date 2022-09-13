@@ -124,7 +124,7 @@ class AuthController extends Controller
         // append education with user
         $user['education'] = Education::where('user_id', $user->id)->first();
         $user['sub_pictures'] = User_profile_images::where('user_id', $user->id)->get();
-        $user['business_id'] = Business::where('user_id', $user->id)->first()['id'];
+        // $user['business_id'] = Business::where('user_id', $user->id)->first()['id'];
 
         $data = [
             'message' => 'Login successful',
