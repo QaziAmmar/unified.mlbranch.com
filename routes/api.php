@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactUSController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PSBController;
 use App\Http\Controllers\ShopController;
@@ -110,6 +111,12 @@ Route::group([
     Route::post('/create', [SubscriptionController::class, 'create']);
     Route::post('/unsubscribed', [SubscriptionController::class, 'unsubscribed']);
     Route::get('/subscription_status', [SubscriptionController::class, 'subscription_status']);
+});
+
+Route::group([
+    'prefix' => 'home'
+], function () {
+    Route::get('/users', [HomeController::class, 'users']);
 });
 
 

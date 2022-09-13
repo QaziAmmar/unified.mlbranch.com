@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Business;
 use App\Models\BusinessExternalLinks;
 use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -90,15 +91,22 @@ class BusinessController extends Controller
 
         // check if you have business subscription then you can create your business
 
-        $business = Business::where('user_id', $user_id)->first();
+        $business = Business::where('user_id', $user_id)
+        ->with("post_products")
+        ->first();
+
         if ($business == null) {
             return $this->general_error_with("Business not found");
         }
-        $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
 
         if ($business == null) {
             return $this->general_error_with("Business not found against this user ID");
         } else {
+            
+            $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
+            $business['firebase_id'] = User::where('id', $user_id)->pluck('firebase_id')->first();
+
+
             return response()->json([
                 'message' => 'Business found successfully',
                 'status' => true,

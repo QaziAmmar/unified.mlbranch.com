@@ -13,6 +13,12 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
 
+    public function post_psbs()
+    {
+        # code...
+        return $this->hasMany(PSB::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
