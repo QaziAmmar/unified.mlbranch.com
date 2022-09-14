@@ -87,7 +87,7 @@ Route::group([
 ], function () {
     # code...
     Route::post('/create', [ProductController::class, 'create']);
-    Route::get('/detail', [ProductController::class, 'detail']);
+    Route::post('/detail', [ProductController::class, 'detail']);
     Route::post('/all', [ProductController::class, 'all']);
 });
 
@@ -95,14 +95,14 @@ Route::group([
     'prefix' => 'psb'
 ], function () {
     Route::post('/create', [PSBController::class, 'create']);
-    Route::get('/detail', [PSBController::class, 'detail']);
-    Route::get('/all_psbs', [PSBController::class, 'all_psbs']);
+    Route::post('/detail', [PSBController::class, 'detail']);
+    Route::post('/all_psbs', [PSBController::class, 'all_psbs']);
 });
 
 Route::group([
     'prefix' => 'shop'
 ], function () {
-    Route::get('/detail', [ShopController::class, 'detail']);
+    Route::post('/detail', [ShopController::class, 'detail']);
 });
 
 Route::group([
@@ -110,13 +110,14 @@ Route::group([
 ], function () {
     Route::post('/create', [SubscriptionController::class, 'create']);
     Route::post('/unsubscribed', [SubscriptionController::class, 'unsubscribed']);
-    Route::get('/subscription_status', [SubscriptionController::class, 'subscription_status']);
+    Route::post('/subscription_status', [SubscriptionController::class, 'subscription_status']);
 });
 
 Route::group([
     'prefix' => 'home'
 ], function () {
     Route::get('/users', [HomeController::class, 'users']);
+    Route::post('/test', [HomeController::class, 'test']);
 });
 
 

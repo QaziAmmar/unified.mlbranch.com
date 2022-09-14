@@ -19,6 +19,11 @@ class User extends Authenticatable
         return $this->hasMany(PSB::class);
     }
 
+    public function businesses()
+    {
+        return $this->belongsToMany(User::class, 'businesses', 'user_id');
+    }
+
     /**
      * The attributes that are mass assignable.
      *
