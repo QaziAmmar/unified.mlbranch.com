@@ -21,5 +21,6 @@ class PSB extends Model
         'user_id',
         'title',
         "description",
+        'image',
     ];
 }

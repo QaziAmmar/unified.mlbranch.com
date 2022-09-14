@@ -88,7 +88,7 @@ Route::group([
     # code...
     Route::post('/create', [ProductController::class, 'create']);
     Route::get('/detail', [ProductController::class, 'detail']);
-    Route::get('/all_products', [ProductController::class, 'all_products']);
+    Route::post('/all', [ProductController::class, 'all']);
 });
 
 Route::group([

@@ -80,10 +80,10 @@ class ProductController extends Controller
         
     }
 
-    public function all_products()
+    public function all()
     {
 
-        $user_id = request('user_id');
+        // $user_id = request('user_id');
         $business_id = request('business_id');
 
         $products = Product::where('business_id', $business_id)->with("post_images")->get();
