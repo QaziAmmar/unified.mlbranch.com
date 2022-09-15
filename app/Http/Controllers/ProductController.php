@@ -62,15 +62,16 @@ class ProductController extends Controller
         $user_id = request('user_id');
         $product_id = request('product_id');
 
+        // show the histor of recent selected products
         RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
 
-        $product = Product::find($product_id);
+        $product = Product::where('id', $product_id)->with("post_images")->get();
 
         if ($product == null) {
             return $this->general_error_with("No product found");
         } else {
-            $product_images = ProductImages::where('product_id', $product->id)->get();
-            $product['image'] = $product_images;
+            // $product_images = ProductImages::where('product_id', $product->id)->get();
+            // $product['image'] = $product_images;
             return response()->json([
                 'message' => 'Product found successfully',
                 'status' => true,

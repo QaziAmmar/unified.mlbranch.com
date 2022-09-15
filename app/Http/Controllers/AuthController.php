@@ -6,14 +6,13 @@ use App\Models\Business;
 use App\Models\Education;
 use App\Models\Institute;
 use App\Models\Subscription;
+use App\Models\Suggestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\User_profile_images;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -59,7 +58,7 @@ class AuthController extends Controller
          As new user is created make a entry for its subscription
          */
         Subscription::create(['user_id' => $user->id]);
-        
+
         // institute details
         $institute = Institute::create([
             'name' => request('institute_name')
@@ -70,6 +69,13 @@ class AuthController extends Controller
         $edu['user_id'] = $user->id;
         $edu['institute_id'] = $institute->id;
         $edu = Education::create($edu);
+
+        // make a self entry in suggestion table.
+        Suggestion::create([
+            'user_id' => $user->id,
+            'friend_id' => $user->id,
+            'status' => config('global.rejected')
+        ]);
 
         $data = [
             'message' => 'User created successfully',
@@ -114,7 +120,7 @@ class AuthController extends Controller
 
 
         // fetch the user and return it back.
-          
+
 
         $user = Auth::user();
         array_walk_recursive($user, function (&$item, $key) {

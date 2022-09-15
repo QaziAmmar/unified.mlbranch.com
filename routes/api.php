@@ -6,6 +6,8 @@ use App\Http\Controllers\ContactUSController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\FriendController;
+use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PSBController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\JsonResponseMiddleware;
 use App\Models\EmailList;
+use App\Models\FriendRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -116,8 +119,25 @@ Route::group([
 Route::group([
     'prefix' => 'home'
 ], function () {
-    Route::get('/users', [HomeController::class, 'users']);
+    Route::post('/friend_request', [HomeController::class, 'friend_request']);
+    Route::post('/friends', [HomeController::class, 'friends']);
     Route::post('/test', [HomeController::class, 'test']);
+});
+
+
+Route::group([
+    'prefix' => 'request'
+], function () {
+    Route::post('/list', [FriendRequestController::class, 'list']);
+    Route::post('/update', [FriendRequestController::class, 'update']);
+});
+
+
+Route::group([
+    'prefix' => 'friend'
+], function () {
+    Route::post('/list', [FriendController::class, 'list']);
+    Route::post('/block', [FriendController::class, 'block']);
 });
 
 

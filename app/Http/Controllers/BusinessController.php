@@ -40,7 +40,6 @@ class BusinessController extends Controller
             'long' => 'required|string|',
             'description' => 'required|string|',
             'bannar_img' => 'required|string|',
-            'business_img' => 'required|string|',
             'external_links' => 'required'
         ]);
 
@@ -63,7 +62,6 @@ class BusinessController extends Controller
         $business = request(['user_id', 'name', 'location_name', 'lat', 'long', 'description']);
         // convert the image into base 64 and save it into the folder.
         $business['bannar_img'] = $this->save_base64_image(request('bannar_img'));
-        $business['business_img'] = $this->save_base64_image(request('business_img'));
 
         $business = Business::create($business);
         $business['external_links'] = $this->save_external_link(request('external_links'), $business->id);
@@ -134,7 +132,6 @@ class BusinessController extends Controller
             'long' => 'string|',
             'description' => 'string|',
             'bannar_img' => 'string|',
-            'business_img' => 'string|'
         ]);
 
         if ($validator->fails()) {

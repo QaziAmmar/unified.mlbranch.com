@@ -19,9 +19,15 @@ class User extends Authenticatable
         return $this->hasMany(PSB::class);
     }
 
-    public function businesses()
+    public function institute()
     {
-        return $this->belongsToMany(User::class, 'businesses', 'user_id');
+        return $this->hasOne(Institute::class);
+    }
+
+
+    public function suggestions()
+    {
+        return $this->belongsToMany(User::class, 'suggestions', 'friend_id');
     }
 
     /**
@@ -50,6 +56,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verified_at',
     ];
 
     
