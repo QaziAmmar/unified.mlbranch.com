@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\GenerateOTPMail;
 use App\Models\User;
 use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class ForgotPasswordController extends Controller
@@ -34,7 +36,11 @@ class ForgotPasswordController extends Controller
         $otp_code = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
 
         $status = User::where('email', $email)->update(['email_code' => $otp_code]);
-
+        // send email to this Email Address
+        $main_data = ['message' => 'Unified OTP'. $otp_code ];
+        
+        Mail::to($email)->send(new GenerateOTPMail($main_data));
+        
         if ($status) {
 
             $data = [
