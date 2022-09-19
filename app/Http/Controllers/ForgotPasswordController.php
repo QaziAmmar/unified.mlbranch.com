@@ -36,12 +36,14 @@ class ForgotPasswordController extends Controller
         $otp_code = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
 
         $status = User::where('email', $email)->update(['email_code' => $otp_code]);
-        // send email to this Email Address
-        $main_data = ['message' => 'Unified OTP '. $otp_code ];
         
-        Mail::to($email)->send(new GenerateOTPMail($main_data));
-        
+        // check either user exist in the databse of not.
         if ($status) {
+
+            // send email to this Email Address
+            // adding some commet 
+            $main_data = ['message' => 'Unified OTP '. $otp_code ];
+            Mail::to($email)->send(new GenerateOTPMail($main_data));
 
             $data = [
                 'message' => 'OTP is sent Successfully',
