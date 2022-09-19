@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <h2>Test Email</h2>
+    <h2>OTP CODE UNIFIED APP</h2>
     <p>{{ $data['message'] }}</p>
   </body>
 </html>
