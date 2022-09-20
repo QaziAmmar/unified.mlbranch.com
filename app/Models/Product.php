@@ -12,7 +12,7 @@ class Product extends Model
 
     public function business()
     {
-        return $this->hasOne(Business::class);
+        return $this->belongsTo(Business::class);
     }
 
     public function post_images()
@@ -25,6 +25,7 @@ class Product extends Model
         'price',
         'title',
         "description",
+        "is_service"
     ];
 
     protected $casts = [

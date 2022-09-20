@@ -27,7 +27,7 @@ class ShopController extends Controller
 
         $banner_images = $this->banner_images();
         $feature_product = $this->feature_product();
-        $recent_products = $this->get_recent_product_of($user_id);
+        $recent_products = $this->get_recent_product_of();
 
         return response()->json([
             'message' => 'Shop data',
@@ -66,16 +66,14 @@ class ShopController extends Controller
     /**
      * Get the recent selected top 5 products form the database.
      */
-    public function get_recent_product_of($user_id)
+    public function get_recent_product_of()
     {
         # code...
-        return Product::inRandomOrder()
-        ->limit(20)
+        return Product::limit(20)
         ->with("post_images")
         ->join('businesses', 'businesses.id', '=', 'products.business_id')
         ->orderBy('products.created_at', 'ASC')
         ->get();
-
 
         // return RecentProduct::where('user_id', $user_id)
         //     ->groupBy('product_id')

@@ -42,15 +42,21 @@ class ProductController extends Controller
 
         $product = request(['business_id', 'price', 'title', 'description']);
 
+         // save the product images against the product id
+         if (request('product_images') != null) {
+            $product['is_service'] = false;
+        } else {
+            $product['is_service'] = true;
+        }
+
         // first create the product and then get the product id
         $product = Product::create($product);
         if ($product == null) {
             return $this->general_error_with("product creation fail");
         }
-
+       
         $product['product_images'] = $this->save_product_images(request('product_images'), $product->id);
-
-
+        
         return response()->json([
             'message' => 'Product added successfully',
             'status' => true,
@@ -67,7 +73,8 @@ class ProductController extends Controller
         // show the histor of recent selected products
         RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
 
-        $product = Product::where('id', $product_id)->with("post_images")->get();
+        $product['product'] = Product::where('id', $product_id)->with("post_images")->with('business')->first();
+        $product['related_product'] = $this->get_related_product();
 
         if ($product == null) {
             return $this->general_error_with("No product found");
@@ -180,6 +187,16 @@ class ProductController extends Controller
             'status' => true,
             'data' => $business
         ], 200);
+    }
+
+    public function get_related_product()
+    {
+        # code...
+        return Product::limit(8)
+        ->with("post_images")
+        ->join('businesses', 'businesses.id', '=', 'products.business_id')
+        ->orderBy('products.created_at', 'ASC')
+        ->get();
     }
 
     public function isBusinessRegisterd($user_id)
