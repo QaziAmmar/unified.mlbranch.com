@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Business;
+use App\Models\FavouriteProducts;
 use App\Models\Product;
 use App\Models\ProductImages;
 use App\Models\RecentProduct;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -45,7 +47,7 @@ class ProductController extends Controller
         if ($product == null) {
             return $this->general_error_with("product creation fail");
         }
-        
+
         $product['product_images'] = $this->save_product_images(request('product_images'), $product->id);
 
 
@@ -78,7 +80,6 @@ class ProductController extends Controller
                 'data' => $product
             ], 200);
         }
-        
     }
 
     public function all()
@@ -102,8 +103,38 @@ class ProductController extends Controller
                 'data' => $products
             ], 200);
         }
-        
     }
+
+    // Like of dislike a product for user.
+    public function like_dislike()
+    {
+        # code...
+
+        $validator = Validator::make(request()->all(), [
+            'user_id' => 'required|string',
+            'product_id' => 'required|string|',
+            'status' => 'required|string|',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+        // show error if no user of product is found againts IDs.
+        if ((User::find(request('user_id'))) == null) {
+            return $this->general_error_with('No user found against this ID');
+        }
+        if ((Product::find(request('product_id'))) == null) {
+            return $this->general_error_with('No product found against this ID');
+        }
+
+        if (request('status') == "1") {
+            return $this->add_favourite(request('user_id'), request('product_id'));
+        } else {
+            return $this->delete_favourite(request('user_id'), request('product_id'));
+        }
+    }
+
 
     /**
      * Update the specified resource in storage.
@@ -115,9 +146,9 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         //
-          //
-          # code...
-          $validator = Validator::make($request->all(), [
+        //
+        # code...
+        $validator = Validator::make($request->all(), [
             'business_id' => 'required',
             'name' => 'required|string|',
             'location_name' => 'required|string|',
@@ -134,7 +165,7 @@ class ProductController extends Controller
 
         $business = Business::find(request('business_id'));
 
-        
+
         // convert the image into base 64 and save it into the folder.
         $date = request(['business_id', 'name', 'location_name', 'lat', 'long', 'description']);
 
@@ -151,11 +182,6 @@ class ProductController extends Controller
         ], 200);
     }
 
-
-
-
-
-
     public function isBusinessRegisterd($user_id)
     {
         # code...
@@ -168,6 +194,63 @@ class ProductController extends Controller
         return true;
     }
 
+    public function add_favourite($user_id, $product_id)
+    {
+        # code...
+        $data = [
+            'user_id' => $user_id,
+            'product_id' => $product_id,
+        ];
+
+        if ($this->is_already_favourite($user_id, $product_id)) {
+            return $this->general_error_with("product already liked");
+        }
+
+        $product = FavouriteProducts::create($data);
+    
+        if ($product == null) {
+            return $this->general_error_with("product creation fail");
+        }
+
+        return response()->json([
+            'message' => 'Product liked successfully',
+            'status' => true,
+            'data' => (object)[]
+        ], 200);
+    }
+
+    public function delete_favourite($user_id, $product_id)
+    {
+        # code...
+
+        $status = FavouriteProducts::where('user_id', $user_id)
+            ->where('product_id', $product_id)
+            ->delete();
+
+        if ($status == null) {
+            return $this->general_error_with("Product is already disliked");
+        }
+
+        return response()->json([
+            'message' => 'Product disliked successfully',
+            'status' => true,
+            'data' => (object)[]
+        ], 200);
+    }
+
+    public function is_already_favourite($user_id, $product_id)
+    {
+        # code...
+        $product = FavouriteProducts::where('user_id', $user_id)
+            ->where('product_id', $product_id)->first();
+
+        if ($product != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     public function save_product_images($product_images, $product_id)
     {
@@ -178,7 +261,7 @@ class ProductController extends Controller
         $save_product_images = [];
         foreach ($product_images as $image) {
 
-            
+
             $image_link = $this->save_base64_image($image);
 
             $data = [

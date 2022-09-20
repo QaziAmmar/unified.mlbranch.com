@@ -24,6 +24,11 @@ class User extends Authenticatable
         return $this->hasOne(Institute::class);
     }
 
+    public function favourite_products()
+    {
+        return $this->hasMany(FavouriteProducts::class);
+    }
+
 
     public function suggestions()
     {

@@ -92,6 +92,9 @@ Route::group([
     Route::post('/create', [ProductController::class, 'create']);
     Route::post('/detail', [ProductController::class, 'detail']);
     Route::post('/all', [ProductController::class, 'all']);
+
+    Route::post('/like_dislike', [ProductController::class, 'like_dislike']);
+    
 });
 
 Route::group([
