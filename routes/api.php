@@ -129,7 +129,7 @@ Route::group([
     'prefix' => 'request'
 ], function () {
     Route::post('/list', [FriendRequestController::class, 'list']);
-    Route::post('/update', [FriendRequestController::class, 'update']);
+    Route::post('/friendship', [FriendRequestController::class, 'friendship']);
 });
 
 
