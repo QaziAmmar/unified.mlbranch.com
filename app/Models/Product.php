@@ -10,6 +10,10 @@ class Product extends Model
 {
     use HasFactory;
 
+    public function business()
+    {
+        return $this->hasOne(Business::class);
+    }
 
     public function post_images()
     {

@@ -57,9 +57,10 @@ class ShopController extends Controller
         # code...
         // get the products that are featured.
         return Product::inRandomOrder()
-            ->where('is_featured', true)
             ->limit(20)
             ->with("post_images")
+            ->join('businesses', 'businesses.id', '=', 'products.business_id')
+            ->where('is_featured', true)
             ->get();
     }
     /**
@@ -69,8 +70,10 @@ class ShopController extends Controller
     {
         # code...
         return Product::inRandomOrder()
-        ->orderBy('created_at', 'ASC')
         ->limit(20)
+        ->with("post_images")
+        ->join('businesses', 'businesses.id', '=', 'products.business_id')
+        ->orderBy('products.created_at', 'ASC')
         ->get();
 
 
