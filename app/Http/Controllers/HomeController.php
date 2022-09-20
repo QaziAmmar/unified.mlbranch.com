@@ -75,9 +75,9 @@ class HomeController extends Controller
         # code...
 
         $validator = Validator::make(request()->all(), [
-            'user_id' => 'required',
-            'friend_id' => 'friend_id',
-            'status' => 'status',
+            'user_id' => 'required|string',
+            'friend_id' => 'required|string',
+            'status' => 'required|string',
         ]);
 
         if ($validator->fails()) {
