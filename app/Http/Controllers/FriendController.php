@@ -31,14 +31,14 @@ class FriendController extends Controller
         $friends1 = Friend::where('user_id', $user_id)
             ->join('users', 'friends.friend_id', '=', 'users.id')
             ->where('friends.block', 0)
-            ->select('friends.friend_id as user_id', 'users.name', 'users.gender', 'users.profile_pic', 'users.firebase_id')
+            ->select('friends.friend_id as user_id', 'users.name', 'users.gender', 'users.profile_pic', 'users.firebase_id', 'users.role')
             ->orderBy('users.name', 'ASC')
             ->get();
 
         $friends2 = Friend::where('friend_id', $user_id)
             ->join('users', 'friends.user_id', '=', 'users.id')
             ->where('friends.block', 0)
-            ->select('friends.user_id as user_id', 'users.name', 'users.gender', 'users.profile_pic', 'users.firebase_id')
+            ->select('friends.user_id as user_id', 'users.name', 'users.gender', 'users.profile_pic', 'users.firebase_id', 'users.role')
             ->orderBy('users.name', 'ASC')
             ->get();
 
