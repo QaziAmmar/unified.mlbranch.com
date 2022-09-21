@@ -22,19 +22,36 @@ class FriendController extends Controller
             return $this->validationError($validator);
         }
 
+
         $user_id = request('user_id');
         // get all the firend request by recent created order by
-        $requests = Friend::where('user_id', $user_id)
+
+        // we need to check this relation in two way.
+
+        $friends1 = Friend::where('user_id', $user_id)
             ->join('users', 'friends.friend_id', '=', 'users.id')
             ->where('friends.block', 0)
             ->select('friends.friend_id as user_id', 'users.name', 'users.gender', 'users.profile_pic', 'users.firebase_id')
             ->orderBy('users.name', 'ASC')
             ->get();
 
+        $friends2 = Friend::where('friend_id', $user_id)
+            ->join('users', 'friends.user_id', '=', 'users.id')
+            ->where('friends.block', 0)
+            ->select('friends.user_id as user_id', 'users.name', 'users.gender', 'users.profile_pic', 'users.firebase_id')
+            ->orderBy('users.name', 'ASC')
+            ->get();
+
+        // combing both users
+        $users1 = collect($friends1);
+        $users2 = collect($friends2);
+
+        $merged = $users1->merge($users2);
+
         $data = [
             'message' => 'user request list',
             'status' => true,
-            'data' => $requests
+            'data' => $merged
         ];
 
         return response()->json($data, 200);
@@ -69,10 +86,10 @@ class FriendController extends Controller
         if ($relation == null) {
             return $this->general_error_with('No friend relation founded');
         }
-        
+
         // check if user is already block of unblocked
         // dd($relation, $relation->block);
-        
+
         if ($status == $relation->block) {
             // block user
             if ($status == "1") {
@@ -80,7 +97,6 @@ class FriendController extends Controller
             } else {
                 return $this->general_error_with('already unblocked');
             }
-            
         }
 
         $relation->block = $status;
@@ -88,7 +104,7 @@ class FriendController extends Controller
 
         if ($status == 1) {
             // block user
-           return $this->general_success_with('user blocked');
+            return $this->general_success_with('user blocked');
         } else {
             // unblock user
             return $this->general_success_with('user unblocked');

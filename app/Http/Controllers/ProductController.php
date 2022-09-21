@@ -17,7 +17,6 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-
     //
     /**
      * Show the form for creating a new resource.
@@ -63,7 +62,6 @@ class ProductController extends Controller
             'data' => $product
         ], 200);
     }
-
 
     public function detail()
     {
@@ -111,7 +109,6 @@ class ProductController extends Controller
             ], 200);
         }
     }
-
     // Like of dislike a product for user.
     public function like_dislike()
     {
@@ -141,8 +138,6 @@ class ProductController extends Controller
             return $this->delete_favourite(request('user_id'), request('product_id'));
         }
     }
-
-
     /**
      * Update the specified resource in storage.
      *
@@ -268,7 +263,6 @@ class ProductController extends Controller
         }
     }
 
-
     public function save_product_images($product_images, $product_id)
     {
 
@@ -311,7 +305,6 @@ class ProductController extends Controller
             'data' => (object)[]
         ], 401);
     }
-
 
     public function save_base64_image($base64File)
     {
