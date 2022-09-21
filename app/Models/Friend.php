@@ -16,7 +16,7 @@ class Friend extends Model
     ];
 
     protected $casts = [
-        'user_id' => 'string',
+        'user_id' => 'integer',
         'friend_id' => 'string'
     ];
 }
