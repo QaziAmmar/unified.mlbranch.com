@@ -124,7 +124,7 @@ Route::group([
 ], function () {
     Route::post('/friend_request', [HomeController::class, 'friend_request']);
     Route::post('/friends', [HomeController::class, 'friends']);
-    Route::post('/test', [HomeController::class, 'test']);
+    Route::post('/search', [HomeController::class, 'search']);
 });
 
 

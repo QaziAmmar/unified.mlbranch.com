@@ -69,6 +69,8 @@ class HomeController extends Controller
 
         return response()->json($data, 200);
     }
+
+
     // POST function
     public function friend_request()
     {
@@ -111,6 +113,51 @@ class HomeController extends Controller
         }
         
     }
+    // POST Search Function
+    public function search()
+    {
+
+        $validator = Validator::make(request()->all(), [
+            'search_string' => 'required|string',
+            'category' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+        $friends = [];
+
+        $category = request('category');
+        $search_string = request('search_string');
+
+        if ($category == 'university') {
+
+            $friends = User::join('education', 'education.user_id', '=', 'users.id')
+            ->join('institutes', 'education.institute_id', '=', 'institutes.id')
+            ->where('name', 'like', '%' . $search_string . '%')->get();
+
+        } else if ($category == 'city') {
+            $friends = User::join('education', 'education.user_id', '=', 'users.id')
+            ->where('city', 'like', '%' . $search_string . '%')->get();
+
+        }else if ($category == 'name') {
+           $friends = User::where('name', 'like', '%' . $search_string . '%')->get();
+        }
+
+        $data = [
+            'message' => 'Search results',
+            'status' => true,
+            'data' => $friends
+        ];
+        
+        return response()->json($data, 200);
+
+    }
+    // END POST Function
+
+
+    // Start Custom function with helper
     public function is_request_sent($user_id, $friend_id)
     {
         # code...
