@@ -14,4 +14,9 @@ class Friend extends Model
         'friend_id',
         'status'
     ];
+
+    protected $casts = [
+        'user_id' => 'string',
+        'friend_id' => 'string'
+    ];
 }
