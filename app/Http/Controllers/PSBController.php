@@ -63,6 +63,26 @@ class PSBController extends Controller
         ], 200);
     }
 
+    public function delete()
+    {
+        # code...
+
+        $psb_id = request('psb_id');
+
+        $psb = PSB::where('id', $psb_id)->delete();
+        
+        if ($psb == 0) {
+            return $this->general_error_with("No psb found");
+        }
+
+        return response()->json([
+            'message' => 'PSB deleted successfully',
+            'status' => true,
+            'data' => (object)[]
+        ], 200);
+    }
+
+
     public function all_psbs()
     {
         # code...

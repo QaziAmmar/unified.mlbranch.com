@@ -102,6 +102,7 @@ Route::group([
 ], function () {
     Route::post('/create', [PSBController::class, 'create']);
     Route::post('/detail', [PSBController::class, 'detail']);
+    Route::post('/delete', [PSBController::class, 'delete']);
     Route::post('/all_psbs', [PSBController::class, 'all_psbs']);
 });
 
@@ -142,8 +143,6 @@ Route::group([
     Route::post('/list', [FriendController::class, 'list']);
     Route::post('/block', [FriendController::class, 'block']);
 });
-
-
 
 
 # code...
