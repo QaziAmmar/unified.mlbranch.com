@@ -11,6 +11,7 @@ use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PSBController;
+use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\JsonResponseMiddleware;
@@ -96,6 +97,17 @@ Route::group([
     Route::post('/like_dislike', [ProductController::class, 'like_dislike']);
     
 });
+
+Route::group([
+    'prefix' => 'service'
+], function () {
+    # code...
+    Route::post('/create', [ServicesController::class, 'create']);
+    Route::post('/detail', [ServicesController::class, 'detail']);
+    Route::post('/all', [ServicesController::class, 'all']);
+    
+});
+
 
 Route::group([
     'prefix' => 'psb'

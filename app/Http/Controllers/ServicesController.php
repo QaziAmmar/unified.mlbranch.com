@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\Business;
 use App\Models\FavouriteProducts;
 use App\Models\Product;
 use App\Models\ProductImages;
 use App\Models\RecentProduct;
+use App\Models\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-
-
-class ProductController extends Controller
+class ServicesController extends Controller
 {
     //
+     //
     /**
      * Show the form for creating a new resource.
      *
@@ -32,50 +33,46 @@ class ProductController extends Controller
             'business_id' => 'required',
             'price' => 'required|string|',
             'title' => 'required|string|',
-            'description' => 'required|string|'
+            'description' => 'required|string|',
+            'duration' => 'required|string|',
         ]);
 
         if ($validator->fails()) {
             return $this->validationError($validator);
         }
 
-        $product = request(['business_id', 'price', 'title', 'description']);
+        $service = request(['business_id', 'price', 'title', 'description', 'duration']);
 
         // first create the product and then get the product id
-        $product = Product::create($product);
-        if ($product == null) {
+        $service = Services::create($service);
+        if ($service == null) {
             return $this->general_error_with("product creation fail");
         }
-       
-        $product['product_images'] = $this->save_product_images(request('product_images'), $product->id);
         
         return response()->json([
-            'message' => 'Product added successfully',
+            'message' => 'Service added successfully',
             'status' => true,
-            'data' => $product
+            'data' => $service
         ], 200);
     }
 
     public function detail()
     {
         $user_id = request('user_id');
-        $product_id = request('product_id');
+        $service_id = request('service_id');
 
-        // show the histor of recent selected products
-        RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
 
-        $product['product'] = Product::where('id', $product_id)->with("post_images")->with('business')->first();
-        $product['related_product'] = $this->get_related_product();
+        $service = Services::where('id', $service_id)
+        ->with('business')->first();
 
-        if ($product == null) {
-            return $this->general_error_with("No product found");
+        if ($service == null) {
+            return $this->general_error_with("No Service found");
         } else {
-            // $product_images = ProductImages::where('product_id', $product->id)->get();
-            // $product['image'] = $product_images;
+            
             return response()->json([
-                'message' => 'Product found successfully',
+                'message' => 'Service found successfully',
                 'status' => true,
-                'data' => $product
+                'data' => $service
             ], 200);
         }
     }
@@ -86,7 +83,7 @@ class ProductController extends Controller
         // $user_id = request('user_id');
         $business_id = request('business_id');
 
-        $products = Product::where('business_id', $business_id)->with("post_images")->get();
+        $products = Services::where('business_id', $business_id)->get();
 
         if (count($products) == 0) {
             return response()->json([
@@ -103,34 +100,7 @@ class ProductController extends Controller
         }
     }
     // Like of dislike a product for user.
-    public function like_dislike()
-    {
-        # code...
 
-        $validator = Validator::make(request()->all(), [
-            'user_id' => 'required|string',
-            'product_id' => 'required|string|',
-            'status' => 'required|string|',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validationError($validator);
-        }
-
-        // show error if no user of product is found againts IDs.
-        if ((User::find(request('user_id'))) == null) {
-            return $this->general_error_with('No user found against this ID');
-        }
-        if ((Product::find(request('product_id'))) == null) {
-            return $this->general_error_with('No product found against this ID');
-        }
-
-        if (request('status') == "1") {
-            return $this->add_favourite(request('user_id'), request('product_id'));
-        } else {
-            return $this->delete_favourite(request('user_id'), request('product_id'));
-        }
-    }
     /**
      * Update the specified resource in storage.
      *
@@ -299,15 +269,4 @@ class ProductController extends Controller
         ], 401);
     }
 
-    public function save_base64_image($base64File)
-    {
-        # code...
-        $fileData = base64_decode($base64File);
-
-        $name = 'product/' . Str::random(15) . '.png';
-
-        Storage::put('public/' . $name, $fileData);
-        // update the user's profile_pic
-        return $name;
-    }
 }

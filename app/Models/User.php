@@ -19,6 +19,12 @@ class User extends Authenticatable
         return $this->hasMany(PSB::class);
     }
 
+    public function profile_sub_images()
+    {
+        # code...
+        return $this->hasMany(User_profile_images::class);
+    }
+
     public function institute()
     {
         return $this->hasOne(Institute::class);
@@ -64,7 +70,7 @@ class User extends Authenticatable
         'email_verified_at',
     ];
 
-    
+
 
     /**
      * The attributes that should be cast.
@@ -79,7 +85,7 @@ class User extends Authenticatable
 
     public function getProfilePicAttribute($value)
     {
-        $value = asset('storage/'.$value);
+        $value = asset('storage/' . $value);
         return $value;
     }
 }

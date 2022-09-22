@@ -40,8 +40,7 @@ class HomeController extends Controller
         if ($user == null) {
             return $this->general_error_with('No user found againes this ID');
         }
-        $user = $user->join('education', 'education.user_id', '=', 'users.id')->first();
-
+        
         // get those user that are not in the suggestion.
         // get top 20 user and append it into the suggestion table.
         $friends =
@@ -49,6 +48,7 @@ class HomeController extends Controller
                 $query->where('user_id', $user_id);
             })
             ->with("post_psbs")
+            ->with("profile_sub_images")
             // ->join('education', 'education.user_id', '=', 'users.id')
             // ->where('city', 'like', '%' . $user->city . '%')
             // ->where('institute_id', 'like', '%' . $user->institute_id . '%')
