@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Business;
 use App\Models\BusinessExternalLinks;
+use App\Models\FavouriteProducts;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -87,11 +88,24 @@ class BusinessController extends Controller
             return $this->general_error_with("user_id is missing");
         }
 
-        // check if you have business subscription then you can create your business
+        // check if your have business subscription then you can create your business
 
         $business = Business::where('user_id', $user_id)
-        ->with("post_products")
+        ->with("services")
+        ->with("products", function($q) use ($user_id)
+        {
+            $q->withCount('like');
+        })
         ->first();
+
+        foreach ($business['products'] as $product) {
+            # code...
+            $product['is_liked'] = false;
+            if (FavouriteProducts::where('user_id', $user_id)
+            ->where('product_id', $product->id)->exists()) {
+                $product['is_liked'] = true;
+            }
+        }
 
         if ($business == null) {
             return $this->general_error_with("Business not found");
@@ -100,10 +114,8 @@ class BusinessController extends Controller
         if ($business == null) {
             return $this->general_error_with("Business not found against this user ID");
         } else {
-            
-            $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
-            $business['firebase_id'] = User::where('id', $user_id)->pluck('firebase_id')->first();
-
+            // $business['firebase_id'] = User::where('id', $user_id)->pluck('firebase_id')->first();
+            // $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
 
             return response()->json([
                 'message' => 'Business found successfully',

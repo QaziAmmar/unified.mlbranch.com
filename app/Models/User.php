@@ -35,6 +35,11 @@ class User extends Authenticatable
         return $this->hasMany(FavouriteProducts::class);
     }
 
+    public function education()
+    {
+        return $this->hasMany(Education::class);
+    }
+
 
     public function suggestions()
     {

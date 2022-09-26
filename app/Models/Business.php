@@ -9,10 +9,16 @@ class Business extends Model
 {
     use HasFactory;
 
-    public function post_products()
+    public function products()
     {
         # code...
         return $this->hasMany(Product::class);
+    }
+
+    public function services()
+    {
+        # code...
+        return $this->hasMany(Services::class);
     }
 
     protected $fillable = [

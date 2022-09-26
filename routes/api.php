@@ -154,6 +154,7 @@ Route::group([
 ], function () {
     Route::post('/list', [FriendController::class, 'list']);
     Route::post('/block', [FriendController::class, 'block']);
+    Route::post('/block_list', [FriendController::class, 'block_list']);
 });
 
 

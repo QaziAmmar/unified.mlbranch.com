@@ -57,10 +57,12 @@ class ShopController extends Controller
         # code...
         // get the products that are featured.
         return Product::inRandomOrder()
-            ->limit(20)
-            ->with("post_images")
-            ->join('businesses', 'businesses.id', '=', 'products.business_id')
-            ->where('is_featured', true)
+            ->whereHas('business', function ($business) {
+                $business->where('is_featured', '=', true);
+            })
+            ->with("business")
+            ->with("product_images")
+            ->limit(10)
             ->get();
     }
     /**
@@ -69,11 +71,11 @@ class ShopController extends Controller
     public function get_recent_product_of()
     {
         # code...
-        return Product::limit(20)
-        ->with("post_images")
-        ->join('businesses', 'businesses.id', '=', 'products.business_id')
-        ->orderBy('products.created_at', 'ASC')
-        ->get();
+        return Product::limit(8)
+            ->with('business')
+            ->with("product_images")
+            ->orderBy('products.created_at', 'ASC')
+            ->get();
 
         // return RecentProduct::where('user_id', $user_id)
         //     ->groupBy('product_id')

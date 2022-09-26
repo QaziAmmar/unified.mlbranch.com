@@ -36,12 +36,16 @@ class HomeController extends Controller
         }
 
         $user_id = request('user_id');
+        $cites = request('cites') == null ? [] : request('cites');
+        $universitys = request('universitys') == null ? [] : request('universitys');
+        $courses = request('courses') == null ? [] : request('courses');
+
         $user = User::find($user_id);
         if ($user == null) {
             return $this->general_error_with('No user found againes this ID');
         }
-        
-        // get those user that are not in the suggestion.
+
+        // get those user that that are not present in suggestion table..
         // get top 20 user and append it into the suggestion table.
         $friends =
             User::whereDoesntHave('suggestions', function ($query) use ($user_id) {
@@ -49,8 +53,10 @@ class HomeController extends Controller
             })
             ->with("post_psbs")
             ->with("profile_sub_images")
-            // ->join('education', 'education.user_id', '=', 'users.id')
-            // ->where('city', 'like', '%' . $user->city . '%')
+            ->with("education", function($query) use ($cites){
+                $query->orWhere('city', $cites);
+            })
+            // ->where('education.city', 'like', '%' . 'Lahore' . '%')
             // ->where('institute_id', 'like', '%' . $user->institute_id . '%')
             // ->where('course', 'like', '%' . $user->course . '%')
             ->limit(10)
@@ -111,7 +117,6 @@ class HomeController extends Controller
         } else {
             return $this->general_success_with('dislike successfull');
         }
-        
     }
     // POST Search Function
     public function search()
@@ -126,33 +131,31 @@ class HomeController extends Controller
             return $this->validationError($validator);
         }
 
-        $friends = [];
-
-        $category = request('category');
         $search_string = request('search_string');
 
-        if ($category == 'university') {
+        $friends = User::where('name', 'like', '%' . $search_string . '%')->get();
 
-            $friends = User::join('education', 'education.user_id', '=', 'users.id')
-            ->join('institutes', 'education.institute_id', '=', 'institutes.id')
-            ->where('name', 'like', '%' . $search_string . '%')->get();
+        // if ($category == 'university') {
 
-        } else if ($category == 'city') {
-            $friends = User::join('education', 'education.user_id', '=', 'users.id')
-            ->where('city', 'like', '%' . $search_string . '%')->get();
+        //     $friends = User::join('education', 'education.user_id', '=', 'users.id')
+        //     ->join('institutes', 'education.institute_id', '=', 'institutes.id')
+        //     ->where('name', 'like', '%' . $search_string . '%')->get();
 
-        }else if ($category == 'name') {
-           $friends = User::where('name', 'like', '%' . $search_string . '%')->get();
-        }
+        // } else if ($category == 'city') {
+        //     $friends = User::join('education', 'education.user_id', '=', 'users.id')
+        //     ->where('city', 'like', '%' . $search_string . '%')->get();
+
+        // }else if ($category == 'name') {
+
+        // }
 
         $data = [
             'message' => 'Search results',
             'status' => true,
             'data' => $friends
         ];
-        
-        return response()->json($data, 200);
 
+        return response()->json($data, 200);
     }
     // END POST Function
 

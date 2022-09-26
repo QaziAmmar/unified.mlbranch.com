@@ -64,14 +64,20 @@ class ProductController extends Controller
         // show the histor of recent selected products
         RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
 
-        $product['product'] = Product::where('id', $product_id)->with("post_images")->with('business')->first();
+        $product['product'] = Product::where('id', $product_id)
+        ->with("product_images")
+        ->with('business')
+        ->first();
+        $product['product']['is_favourite'] = $this->is_already_favourite($user_id, $product_id);
         $product['related_product'] = $this->get_related_product();
+        
 
         if ($product == null) {
             return $this->general_error_with("No product found");
         } else {
             // $product_images = ProductImages::where('product_id', $product->id)->get();
             // $product['image'] = $product_images;
+            
             return response()->json([
                 'message' => 'Product found successfully',
                 'status' => true,
@@ -86,7 +92,7 @@ class ProductController extends Controller
         // $user_id = request('user_id');
         $business_id = request('business_id');
 
-        $products = Product::where('business_id', $business_id)->with("post_images")->get();
+        $products = Product::where('business_id', $business_id)->with("product_images")->get();
 
         if (count($products) == 0) {
             return response()->json([
@@ -181,10 +187,13 @@ class ProductController extends Controller
     {
         # code...
         return Product::limit(8)
-        ->with("post_images")
+        ->with('product_image')
         ->join('businesses', 'businesses.id', '=', 'products.business_id')
+        ->select('products.id', 'products.title', 'products.price')
+        ->withCount('like')
         ->orderBy('products.created_at', 'ASC')
         ->get();
+
     }
 
     public function isBusinessRegisterd($user_id)

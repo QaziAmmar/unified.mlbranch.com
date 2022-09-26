@@ -12,13 +12,30 @@ class Product extends Model
 
     public function business()
     {
-        return $this->belongsTo(Business::class);
+        return $this->belongsTo(Business::class)->select('id','user_id', 'name', 'location_name', 'lat', 'long', 'is_featured');
     }
 
-    public function post_images()
+    public function product_images()
     {
-        return $this->hasMany(ProductImages::class);
+        return $this->hasMany(ProductImages::class)->select('id','product_id','image_link');
     }
+
+    public function product_image()
+    {
+        return $this->hasOne(ProductImages::class,)->select('id','product_id','image_link');
+    }
+
+    public function like()
+    {
+       return $this->hasMany(FavouriteProducts::class, 'product_id');
+    }
+
+    public function is_liked($user_id)
+    {
+        return !! FavouriteProducts::where('user_id', $user_id)->first();
+    }
+
+
 
     protected $fillable = [
         'business_id',

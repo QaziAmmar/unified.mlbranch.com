@@ -78,6 +78,37 @@ class FriendController extends Controller
         return $this->update_user_relation($user_id, $friend_id, $status);
     }
 
+    public function block_list()
+    {
+        # code...
+
+        $validator = Validator::make(request()->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+
+        $user_id = request('user_id');
+        // get all the firend request by recent created order by
+
+        // we need to check this relation in two way.
+
+        $block_list = Friend::where('user_id', $user_id)
+            ->where('block', 1)
+            ->get();
+
+
+        $data = [
+            'message' => 'user request list',
+            'status' => true,
+            'data' => $block_list
+        ];
+
+        return response()->json($data, 200);
+    }
 
     public function update_user_relation($user_id, $friend_id, $status)
     {
