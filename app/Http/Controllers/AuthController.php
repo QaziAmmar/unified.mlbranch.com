@@ -70,12 +70,30 @@ class AuthController extends Controller
         $edu['institute_id'] = $institute->id;
         $edu = Education::create($edu);
 
-        // make a self entry in suggestion table.
+        // make a self entry in suggestion table so that person did't get his own suggestion.
         Suggestion::create([
             'user_id' => $user->id,
             'friend_id' => $user->id,
             'status' => config('global.rejected')
         ]);
+
+        // adding data to make model same like login
+        $user['bio'] = '';
+        $user['lat'] = '';
+        $user['long'] = '';
+        
+        $user['g_token'] = '';
+        $user['fb_token'] = '';
+        $user['apl_token'] = '';
+        $user['email_code'] = '';
+        
+        $user['device_id'] = '';
+        $user['profile_pic'] = '';
+        $user['education'] = $edu;
+        $user['sub_pictures'] = [];
+        $user['business_created'] = 0;
+        $user['interstes'] = [];
+        $user['skills'] = [];
 
         $data = [
             'message' => 'User created successfully',
