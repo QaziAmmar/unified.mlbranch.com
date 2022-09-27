@@ -68,7 +68,6 @@ class ProductController extends Controller
         ->with("product_images")
         ->with('business')
         ->first();
-        $product['product']['is_favourite'] = $this->is_already_favourite($user_id, $product_id);
         $product['related_product'] = $this->get_related_product();
         
 
@@ -188,10 +187,10 @@ class ProductController extends Controller
         # code...
         return Product::limit(8)
         ->with('product_image')
-        ->join('businesses', 'businesses.id', '=', 'products.business_id')
-        ->select('products.id', 'products.title', 'products.price')
-        ->withCount('like')
-        ->orderBy('products.created_at', 'ASC')
+        // ->join('businesses', 'businesses.id', '=', 'products.business_id')
+        // ->select('products.id', 'products.title', 'products.price')
+        // ->withCount('like')
+        // ->orderBy('products.created_at', 'ASC')
         ->get();
 
     }

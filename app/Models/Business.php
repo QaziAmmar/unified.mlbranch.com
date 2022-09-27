@@ -21,6 +21,18 @@ class Business extends Model
         return $this->hasMany(Services::class);
     }
 
+    public function links()
+    {
+        # code...
+        return $this->hasMany(BusinessExternalLinks::class);
+    }
+
+    public function is_favourite()
+    {
+        # code...
+        return $this->hasOne(FavouriteBusiness::class);
+    }
+
     protected $fillable = [
         'user_id',
         'name',

@@ -17,7 +17,7 @@ class Product extends Model
 
     public function product_images()
     {
-        return $this->hasMany(ProductImages::class)->select('id','product_id','image_link');
+        return $this->hasMany(ProductImages::class, 'product_id')->select('id','product_id','image_link');
     }
 
     public function product_image()

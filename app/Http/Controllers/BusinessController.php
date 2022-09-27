@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Business;
 use App\Models\BusinessExternalLinks;
+use App\Models\FavouriteBusiness;
 use App\Models\FavouriteProducts;
 use App\Models\Subscription;
 use App\Models\User;
@@ -81,41 +82,48 @@ class BusinessController extends Controller
      * @param  \App\Models\Business  $business
      * @return \Illuminate\Http\Response
      */
-    public function show($user_id)
+    public function show()
     {
         //
-        if ($user_id == null) {
-            return $this->general_error_with("user_id is missing");
+        $validator = Validator::make(request()->all(), [
+            'business_id' => 'required|string',
+            'user_id' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
         }
 
         // check if your have business subscription then you can create your business
 
-        $business = Business::where('user_id', $user_id)
-        ->with("services")
-        ->with("products", function($q) use ($user_id)
-        {
-            $q->withCount('like');
-        })
-        ->first();
+        $business_id = request('business_id');
+        $user_id = request('user_id');
 
-        foreach ($business['products'] as $product) {
-            # code...
-            $product['is_liked'] = false;
-            if (FavouriteProducts::where('user_id', $user_id)
-            ->where('product_id', $product->id)->exists()) {
-                $product['is_liked'] = true;
-            }
-        }
+        $business = Business::where('id', $business_id)
+            ->with("links", function($query){
+                $query->select('id', 'category','external_link', 'business_id');
+            })
+            ->with("services", function($query){
+                $query->select('id', 'price','title', 'description', 'business_id');
+            })
+            ->with('products', function ($query) {
+                $query->select('id', 'price','title', 'description', 'business_id')
+                ->with('product_images');
+            })
+            ->first();
+
+            $business['is_favourite'] = FavouriteBusiness::where('user_id', $user_id)
+            ->where('business_id', $business_id)
+            ->first() == null ? false : true;
+
 
         if ($business == null) {
             return $this->general_error_with("Business not found");
         }
 
         if ($business == null) {
-            return $this->general_error_with("Business not found against this user ID");
+            return $this->general_error_with("Business not found against this Business ID");
         } else {
-            // $business['firebase_id'] = User::where('id', $user_id)->pluck('firebase_id')->first();
-            // $business['external_links'] = BusinessExternalLinks::where('business_id', $business->id)->get();
 
             return response()->json([
                 'message' => 'Business found successfully',
@@ -279,6 +287,103 @@ class BusinessController extends Controller
         ], 200);
     }
 
+
+    /**
+     * Delete the link from the edit business profile
+     *
+     * @param  \App\Http\Requests\UpdateBusinessRequest  $request
+     * @param user_id, business_id, status
+     */
+
+    public function like_dislike()
+    {
+        # code...
+
+        $validator = Validator::make(request()->all(), [
+            'user_id' => 'required|string',
+            'business_id' => 'required|string|',
+            'status' => 'required|string|',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+        // show error if no user of product is found againts IDs.
+        if ((User::find(request('user_id'))) == null) {
+            return $this->general_error_with('No user found against this ID');
+        }
+        if ((Business::find(request('business_id'))) == null) {
+            return $this->general_error_with('No Business found against this ID');
+        }
+
+        if (request('status') == "1") {
+            return $this->add_favourite(request('user_id'), request('business_id'));
+        } else {
+            return $this->delete_favourite(request('user_id'), request('business_id'));
+        }
+    }
+
+    // CUSTOM FUNCTION EXTENSION
+
+    public function add_favourite($user_id, $business_id)
+    {
+        # code...
+        $data = [
+            'user_id' => $user_id,
+            'business_id' => $business_id,
+        ];
+
+
+        if ($this->is_already_favourite($user_id, $business_id)) {
+            return $this->general_error_with("business already liked");
+        }
+
+        $product = FavouriteBusiness::create($data);
+
+        if ($product == null) {
+            return $this->general_error_with("unable to like business");
+        }
+
+        return response()->json([
+            'message' => 'Business liked successfully',
+            'status' => true,
+            'data' => $product
+        ], 200);
+    }
+
+    public function delete_favourite($user_id, $business_id)
+    {
+        # code...
+
+        $status = FavouriteBusiness::where('user_id', $user_id)
+            ->where('business_id', $business_id)
+            ->delete();
+
+        if ($status == null) {
+            return $this->general_error_with("Business is already disliked");
+        }
+
+        return response()->json([
+            'message' => 'Business disliked successfully',
+            'status' => true,
+            'data' => (object)[]
+        ], 200);
+    }
+
+    public function is_already_favourite($user_id, $business_id)
+    {
+        # code...
+        $business = FavouriteBusiness::where('user_id', $user_id)
+            ->where('business_id', $business_id)->first();
+
+        if ($business != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function isBusinessRegisterd($user_id)
     {
         # code...
@@ -291,7 +396,6 @@ class BusinessController extends Controller
         }
         return true;
     }
-
 
     public function validationError($validator)
     {
@@ -312,7 +416,6 @@ class BusinessController extends Controller
             'data' => (object)[]
         ], 401);
     }
-
 
     public function save_base64_image($base64File)
     {

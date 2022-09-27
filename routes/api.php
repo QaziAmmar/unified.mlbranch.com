@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\ContactUSController;
 use App\Http\Controllers\EditProfileController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Middleware\JsonResponseMiddleware;
+use App\Models\BusinessCategory;
 use App\Models\EmailList;
 use App\Models\FriendRequest;
 use App\Models\Post;
@@ -78,11 +80,19 @@ Route::group([
 ], function () {
     # code...
     Route::post('/create', [BusinessController::class, 'create']);
-    Route::get('/show/{user_id}', [BusinessController::class, 'show']);
+    Route::post('/show', [BusinessController::class, 'show']);
     Route::put('/update', [BusinessController::class, 'update']);
 
     Route::post('/add_external_link', [BusinessController::class, 'add_external_link']);
     Route::post('/delete_external_link', [BusinessController::class, 'delete_external_link']);
+    Route::post('/like_dislike', [BusinessController::class, 'like_dislike']);
+});
+
+Route::group([
+    'prefix' => 'business_category'
+], function () {
+    # code...
+    Route::post('/create', [BusinessCategoryController::class, 'create']);
 });
 
 
@@ -93,8 +103,6 @@ Route::group([
     Route::post('/create', [ProductController::class, 'create']);
     Route::post('/detail', [ProductController::class, 'detail']);
     Route::post('/all', [ProductController::class, 'all']);
-
-    Route::post('/like_dislike', [ProductController::class, 'like_dislike']);
     
 });
 
@@ -121,7 +129,9 @@ Route::group([
 Route::group([
     'prefix' => 'shop'
 ], function () {
-    Route::post('/detail', [ShopController::class, 'detail']);
+    Route::post('/home', [ShopController::class, 'home']);
+    Route::post('/business_list', [ShopController::class, 'business_list']);
+    Route::post('/test', [ShopController::class, 'test']);
 });
 
 Route::group([
