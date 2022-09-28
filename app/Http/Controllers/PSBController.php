@@ -87,7 +87,7 @@ class PSBController extends Controller
     {
         # code...
         $user_id = request('user_id');
-        $psb = PSB::where('user_id', $user_id)->with("psb_images")->get();
+        $psb = PSB::where('user_id', $user_id)->get();
         if (count($psb) == 0) {
             return $this->general_error_with("No psb found");
         }

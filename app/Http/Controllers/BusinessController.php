@@ -75,6 +75,54 @@ class BusinessController extends Controller
         ], 200);
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Business  $business
+     * @return \Illuminate\Http\Response
+     */
+    public function my_business()
+    {
+        //
+        $validator = Validator::make(request()->all(), [
+            'user_id' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+        // check if your have business subscription then you can create your business
+        $user_id = request('user_id');
+
+        $business = Business::where('user_id', $user_id)
+            ->with("links", function($query){
+                $query->select('id', 'category','external_link', 'business_id');
+            })
+            ->with("services", function($query){
+                $query->select('id', 'price','title', 'description', 'business_id');
+            })
+            ->with('products', function ($query) {
+                $query->select('id', 'price','title', 'description', 'business_id')
+                ->with('product_images');
+            })
+            ->first();
+
+        if ($business == null) {
+            return $this->general_error_with("Business not found");
+        }
+
+        if ($business == null) {
+            return $this->general_error_with("Business not found against this Business ID");
+        } else {
+
+            return response()->json([
+                'message' => 'My Business found successfully',
+                'status' => true,
+                'data' => $business
+            ], 200);
+        }
+    }
 
     /**
      * Display the specified resource.
@@ -162,7 +210,7 @@ class BusinessController extends Controller
         // convert the image into base 64 and save it into the folder.
         $date = request(['business_id']);
         // check which fields are set for update then only update those fields.
-        $date = $this->generate_date_for_update($date, $business);
+        $date = $this->generate_date_for_update($date);
         // update the business
         $business->update($date);
 
@@ -174,7 +222,7 @@ class BusinessController extends Controller
     }
 
 
-    public function generate_date_for_update($date, $business)
+    public function generate_date_for_update($date)
     {
         # code...
         if (request('name') != null) {

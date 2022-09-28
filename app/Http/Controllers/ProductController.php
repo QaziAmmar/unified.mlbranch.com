@@ -32,7 +32,8 @@ class ProductController extends Controller
             'business_id' => 'required',
             'price' => 'required|string|',
             'title' => 'required|string|',
-            'description' => 'required|string|'
+            'description' => 'required|string|',
+            'product_images' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -145,41 +146,52 @@ class ProductController extends Controller
      */
     public function update(Request $request)
     {
-        //
-        //
         # code...
         $validator = Validator::make($request->all(), [
-            'business_id' => 'required',
-            'name' => 'required|string|',
-            'location_name' => 'required|string|',
-            'lat' => 'required|string|',
-            'long' => 'required|string|',
+            'product_id' => 'required',
+            'price' => 'required|string|',
+            'title' => 'required|string|',
             'description' => 'required|string|',
-            'bannar_img' => 'required|string|',
-            'business_img' => 'required|string|'
+            'product_images' => 'required'
         ]);
 
         if ($validator->fails()) {
             return $this->validationError($validator);
         }
 
-        $business = Business::find(request('business_id'));
-
-
-        // convert the image into base 64 and save it into the folder.
-        $date = request(['business_id', 'name', 'location_name', 'lat', 'long', 'description']);
-
-        $date['bannar_img'] = $this->save_base64_image(request('bannar_img'));
-        $date['business_img'] = $this->save_base64_image(request('business_img'));
-
-
-        $business->update($date);
+        $product = Product::find(request('product_id'));
+        $data = request(['business_id']);
+        // check which fields are set for update then only update those fields.
+        $data = $this->generate_date_for_update($data, request('product_id'));
+        
+        $product->update($data);
 
         return response()->json([
-            'message' => 'Business updated successfully',
+            'message' => 'Product updated successfully',
             'status' => true,
-            'data' => $business
+            'data' => $product
         ], 200);
+    }
+
+    // CUSTOM FUNCTION EXTENSION
+
+    public function generate_date_for_update($date, $product_id)
+    {
+        # code...
+        if (request('price') != null) {
+            $date['price'] = request('price');
+        }
+        if (request('title') != null) {
+            $date['title'] = request('title');
+        }
+        if (request('description') != null) {
+            $date['description'] = request('description');
+        }
+        if (request('product_images') != null) {
+            $date['product_images'] = $this->save_product_images(request('product_images'), $product_id);
+        }
+
+        return $date;
     }
 
     public function get_related_product()

@@ -81,6 +81,7 @@ Route::group([
     # code...
     Route::post('/create', [BusinessController::class, 'create']);
     Route::post('/show', [BusinessController::class, 'show']);
+    Route::post('/my_business', [BusinessController::class, 'my_business']);
     Route::put('/update', [BusinessController::class, 'update']);
 
     Route::post('/add_external_link', [BusinessController::class, 'add_external_link']);
@@ -101,6 +102,7 @@ Route::group([
 ], function () {
     # code...
     Route::post('/create', [ProductController::class, 'create']);
+    Route::post('/update', [ProductController::class, 'update']);
     Route::post('/detail', [ProductController::class, 'detail']);
     Route::post('/all', [ProductController::class, 'all']);
     
