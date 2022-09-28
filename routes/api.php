@@ -94,6 +94,8 @@ Route::group([
 ], function () {
     # code...
     Route::post('/create', [BusinessCategoryController::class, 'create']);
+    Route::get('/list', [BusinessCategoryController::class, 'list']);
+    Route::post('/delete', [BusinessCategoryController::class, 'delete']);
 });
 
 

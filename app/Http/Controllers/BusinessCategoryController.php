@@ -42,6 +42,67 @@ class BusinessCategoryController extends Controller
         ], 200);
     }
 
+    public function list()
+    {
+        //
+        # code...
+
+        // first create the product and then get the product id
+        $categories = BusinessCategory::get();
+        if ($categories == null) {
+            return $this->general_error_with("No Category Found in Database");
+        }        
+        return response()->json([
+            'message' => 'Categories list',
+            'status' => true,
+            'data' => $categories
+        ], 200);
+    }
+
+    public function update()
+    {
+        //
+        # code...
+
+        // first create the product and then get the product id
+        $categories = BusinessCategory::get();
+        if ($categories == null) {
+            return $this->general_error_with("No Category Found in Database");
+        }        
+        return response()->json([
+            'message' => 'Categories list',
+            'status' => true,
+            'data' => $categories
+        ], 200);
+    }
+
+    public function delete()
+    {
+        //
+        # code...
+        $validator = Validator::make(request()->all(), [
+            'category_id' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+
+        // first create the product and then get the product id
+
+        $status = BusinessCategory::where('id', request('category_id'))
+            ->delete();
+
+        if ($status == null) {
+            return $this->general_error_with("No Category Found in Database");
+        }        
+        return response()->json([
+            'message' => 'Categories deleted Successfully',
+            'status' => true,
+            'data' => (object)[]
+        ], 200);
+    }
 
 
     // Custom Function Extension.
