@@ -10,6 +10,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PSBController;
 use App\Http\Controllers\ServicesController;
@@ -96,6 +97,15 @@ Route::group([
     Route::post('/create', [BusinessCategoryController::class, 'create']);
     Route::get('/list', [BusinessCategoryController::class, 'list']);
     Route::post('/delete', [BusinessCategoryController::class, 'delete']);
+});
+
+Route::group([
+    'prefix' => 'institute'
+], function () {
+    # code...
+    Route::post('/create', [InstituteController::class, 'create']);
+    Route::get('/list', [InstituteController::class, 'list']);
+    Route::post('/destroy', [InstituteController::class, 'destroy']);
 });
 
 
