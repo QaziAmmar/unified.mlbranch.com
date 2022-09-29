@@ -34,7 +34,7 @@ class AuthController extends Controller
             'role' => 'required|string',
             'looking_for' => 'required|string',
             'gender' => 'required|string',
-            'institute_name' => 'required|string',
+            'institute_id' => 'required|string',
             'course' => 'required|string',
             'city' => 'required|string',
             'firebase_id' => 'required|string'
@@ -50,7 +50,7 @@ class AuthController extends Controller
 
         // creating new user.
         $request['password'] = Hash::make($request->password);
-        $user = request(['name', 'email', 'password', 'age', 'role', 'looking_for', 'gender', 'firebase_id']);
+        $user = request(['name', 'email', 'password', 'age', 'role', 'looking_for', 'gender', 'firebase_id', 'institute_id']);
 
         $user = User::create($user);
 
@@ -59,15 +59,10 @@ class AuthController extends Controller
          */
         Subscription::create(['user_id' => $user->id]);
 
-        // institute details
-        $institute = Institute::create([
-            'name' => request('institute_name')
-        ]);
-
         // education details
         $edu = request(['course', 'city']);
         $edu['user_id'] = $user->id;
-        $edu['institute_id'] = $institute->id;
+        $edu['institute_id'] = request('institute_id');
         $edu = Education::create($edu);
 
         // make a self entry in suggestion table so that person did't get his own suggestion.

@@ -61,7 +61,8 @@ class User extends Authenticatable
         "gender",
         "firebase_id",
         "profile_pic",
-        "bio"
+        "bio",
+        "institute_id"
     ];
 
     /**
