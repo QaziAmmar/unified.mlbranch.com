@@ -44,7 +44,7 @@ class Business extends Model
         "firebase_id",
         "business_img",
         "is_featured",
-        "featured_at"
-        
+        "featured_at",
+        "category_id"
     ];
 }

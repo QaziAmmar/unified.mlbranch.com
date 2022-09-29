@@ -27,6 +27,7 @@ class PSBController extends Controller
         }
 
         $psb = request(['user_id', 'title', 'description']);
+        $psb['image'] = "";
         if (request('psb_image') != null) {
             $psb['image'] = $this->save_base64_image(request('psb_image'));
         }
@@ -35,9 +36,6 @@ class PSBController extends Controller
         if ($psb == null) {
             return $this->general_error_with("psb creation fail");
         }
-
-        // $psb['psb_images'] = $this->save_base64_image(request('psb_image'), $psb->id);
-
 
         return response()->json([
             'message' => 'PSB added successfully',

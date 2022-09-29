@@ -61,7 +61,7 @@ class BusinessController extends Controller
             return $this->general_error_with("Please Subscribe before creating business");
         }
 
-        $business = request(['user_id', 'name', 'location_name', 'lat', 'long', 'description']);
+        $business = request(['user_id', 'name', 'location_name', 'lat', 'long', 'description', 'category_id']);
         // convert the image into base 64 and save it into the folder.
         $business['bannar_img'] = $this->save_base64_image(request('bannar_img'));
 
