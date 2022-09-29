@@ -43,10 +43,8 @@ class ShopController extends Controller
         ], 200);
     }
 
-    public function business_list()
+    public function business_list_by_category()
     {
-        # code...
-
         # code...
         $validator = Validator::make(request()->all(), [
             'user_id' => 'required|string',

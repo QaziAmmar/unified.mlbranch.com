@@ -19,8 +19,7 @@ class PSBController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'title' => 'required|string|',
-            'description' => 'required|string|',
-            'psb_image' => 'required'
+            'description' => 'required|string|'
         ]);
 
         if ($validator->fails()) {
@@ -28,7 +27,9 @@ class PSBController extends Controller
         }
 
         $psb = request(['user_id', 'title', 'description']);
-        $psb['image'] = $this->save_base64_image(request('psb_image'));
+        if (request('psb_image') != null) {
+            $psb['image'] = $this->save_base64_image(request('psb_image'));
+        }
         // first create the product and then get the product id
         $psb = PSB::create($psb);
         if ($psb == null) {

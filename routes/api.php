@@ -144,7 +144,7 @@ Route::group([
     'prefix' => 'shop'
 ], function () {
     Route::post('/home', [ShopController::class, 'home']);
-    Route::post('/business_list', [ShopController::class, 'business_list']);
+    Route::post('/business_list_by_category', [ShopController::class, 'business_list_by_category']);
     Route::post('/test', [ShopController::class, 'test']);
 });
 
