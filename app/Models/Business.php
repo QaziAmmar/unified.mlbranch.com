@@ -33,6 +33,12 @@ class Business extends Model
         return $this->hasOne(FavouriteBusiness::class);
     }
 
+    public function user()
+    {
+        # code...
+        return $this->belongsTo(User::class);
+    }
+
     protected $fillable = [
         'user_id',
         'name',

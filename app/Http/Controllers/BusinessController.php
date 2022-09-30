@@ -96,15 +96,15 @@ class BusinessController extends Controller
         $user_id = request('user_id');
 
         $business = Business::where('user_id', $user_id)
-            ->with("links", function($query){
-                $query->select('id', 'category','external_link', 'business_id');
+            ->with("links", function ($query) {
+                $query->select('id', 'category', 'external_link', 'business_id');
             })
-            ->with("services", function($query){
-                $query->select('id', 'price','title', 'description', 'business_id');
+            ->with("services", function ($query) {
+                $query->select('id', 'price', 'title', 'description', 'business_id');
             })
             ->with('products', function ($query) {
-                $query->select('id', 'price','title', 'description', 'business_id')
-                ->with('product_images');
+                $query->select('id', 'price', 'title', 'description', 'business_id')
+                    ->with('product_images');
             })
             ->first();
 
@@ -148,19 +148,22 @@ class BusinessController extends Controller
         $user_id = request('user_id');
 
         $business = Business::where('id', $business_id)
-            ->with("links", function($query){
-                $query->select('id', 'category','external_link', 'business_id');
+            ->with('user', function($query){
+                $query->select('id', 'name', 'firebase_id', 'profile_pic');
             })
-            ->with("services", function($query){
-                $query->select('id', 'price','title', 'description', 'business_id');
+            ->with("links", function ($query) {
+                $query->select('id', 'category', 'external_link', 'business_id');
+            })
+            ->with("services", function ($query) {
+                $query->select('id', 'price', 'title', 'description', 'business_id');
             })
             ->with('products', function ($query) {
-                $query->select('id', 'price','title', 'description', 'business_id')
-                ->with('product_images');
+                $query->select('id', 'price', 'title', 'description', 'business_id')
+                    ->with('product_images');
             })
             ->first();
 
-            $business['is_favourite'] = FavouriteBusiness::where('user_id', $user_id)
+        $business['is_favourite'] = FavouriteBusiness::where('user_id', $user_id)
             ->where('business_id', $business_id)
             ->first() == null ? false : true;
 
