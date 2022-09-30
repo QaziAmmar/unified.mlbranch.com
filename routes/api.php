@@ -181,6 +181,14 @@ Route::group([
     Route::post('/block_list', [FriendController::class, 'block_list']);
 });
 
+Route::group([
+    'prefix' => 'email_list'
+], function () {
+    Route::post('/list', [EmailListController::class, 'list']);
+    Route::post('/create', [EmailListController::class, 'create']);
+});
+
+
 
 # code...
 Route::post('email_list', [EmailListController::class, 'email_list']);
