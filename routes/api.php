@@ -117,7 +117,7 @@ Route::group([
     Route::post('/update', [ProductController::class, 'update']);
     Route::post('/detail', [ProductController::class, 'detail']);
     Route::post('/all', [ProductController::class, 'all']);
-    
+
 });
 
 Route::group([
@@ -127,7 +127,7 @@ Route::group([
     Route::post('/create', [ServicesController::class, 'create']);
     Route::post('/detail', [ServicesController::class, 'detail']);
     Route::post('/all', [ServicesController::class, 'all']);
-    
+
 });
 
 

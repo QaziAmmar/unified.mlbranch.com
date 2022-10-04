@@ -155,7 +155,7 @@ class BusinessController extends Controller
                 $query->select('id', 'category', 'external_link', 'business_id');
             })
             ->with("services", function ($query) {
-                $query->select('id', 'price', 'title', 'description', 'business_id');
+                $query->select('id', 'price', 'title', 'description', 'business_id','duration');
             })
             ->with('products', function ($query) {
                 $query->select('id', 'price', 'title', 'description', 'business_id')

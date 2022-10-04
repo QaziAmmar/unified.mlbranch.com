@@ -47,9 +47,9 @@ class ProductController extends Controller
         if ($product == null) {
             return $this->general_error_with("product creation fail");
         }
-       
+
         $product['product_images'] = $this->save_product_images(request('product_images'), $product->id);
-        
+
         return response()->json([
             'message' => 'Product added successfully',
             'status' => true,
@@ -65,19 +65,34 @@ class ProductController extends Controller
         // show the histor of recent selected products
         RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
 
+        $product['user_name'] = 'ammar';
+        $product['user_profile_pic'] = 'ammar/asdjfals;./ asdf';
+
         $product['product'] = Product::where('id', $product_id)
         ->with("product_images")
         ->with('business')
         ->first();
+
+        $user = null;
+        $business_id = $product['product']['business_id'];
+        $user = Business::where('user_id', $user_id)->with("user")->get();
+
+
+        print_r($user);
+
+        return;
+
+        $product['user_name'] = $product['product']['business_id'];
+        $product['user_profile_pic'] = 'ammar/asdjfals;./ asdf';
         $product['related_product'] = $this->get_related_product();
-        
+
 
         if ($product == null) {
             return $this->general_error_with("No product found");
         } else {
             // $product_images = ProductImages::where('product_id', $product->id)->get();
             // $product['image'] = $product_images;
-            
+
             return response()->json([
                 'message' => 'Product found successfully',
                 'status' => true,
@@ -163,7 +178,7 @@ class ProductController extends Controller
         $data = request(['business_id']);
         // check which fields are set for update then only update those fields.
         $data = $this->generate_date_for_update($data, request('product_id'));
-        
+
         $product->update($data);
 
         return response()->json([
@@ -232,7 +247,7 @@ class ProductController extends Controller
         }
 
         $product = FavouriteProducts::create($data);
-    
+
         if ($product == null) {
             return $this->general_error_with("product creation fail");
         }

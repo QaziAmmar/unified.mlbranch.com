@@ -11,11 +11,11 @@ class EmailListController extends Controller
     //
 
 
-    public function email_list(Request $request)
+    public function email_list()
     {
         # code...
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(request()->all(), [
             'email' => 'required',
         ]);
 
@@ -36,7 +36,7 @@ class EmailListController extends Controller
             ], 200);
         }
 
-        
+
     }
 
 
@@ -57,7 +57,7 @@ class EmailListController extends Controller
         }
 
         $email_list = request('email_list');
-        
+
         foreach ($email_list as $email) {
             # code...
             $insert_email['email'] = $email;
@@ -71,7 +71,7 @@ class EmailListController extends Controller
             ], 200);
         }
 
-        
+
     }
 
 
