@@ -61,6 +61,9 @@ class ShopController extends Controller
             ->where('is_featured', '=', false)
             ->where('category_id', '=', $category_id)
             ->orderBy('created_at', 'ASC')
+            ->with('user', function ($query) {
+                $query->select('id', 'name', 'profile_pic');
+            })
             ->limit(10)
             ->get();
 
@@ -145,8 +148,8 @@ class ShopController extends Controller
         return Business::inRandomOrder()
             ->where('is_featured', '=', true)
             ->limit(10)
-            ->with('user', function($query){
-                    $query->select('id', 'name', 'profile_pic');
+            ->with('user', function ($query) {
+                $query->select('id', 'name', 'profile_pic');
             })
             ->get();
 
