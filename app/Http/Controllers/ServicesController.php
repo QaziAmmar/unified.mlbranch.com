@@ -63,7 +63,11 @@ class ServicesController extends Controller
 
 
         $service = Services::where('id', $service_id)
-        ->with('business')->first();
+        ->with('business', function($business){
+            $business->with('user', function($query){
+                $query->select('id', 'name', 'profile_pic');
+            });
+        })->first();
 
         if ($service == null) {
             return $this->general_error_with("No Service found");

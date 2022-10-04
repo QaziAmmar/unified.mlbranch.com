@@ -145,6 +145,9 @@ class ShopController extends Controller
         return Business::inRandomOrder()
             ->where('is_featured', '=', true)
             ->limit(10)
+            ->with('user', function($query){
+                    $query->select('id', 'name', 'profile_pic');
+            })
             ->get();
 
         // wherehas Query

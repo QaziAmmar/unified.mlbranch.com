@@ -62,36 +62,24 @@ class ProductController extends Controller
         $user_id = request('user_id');
         $product_id = request('product_id');
 
-        // show the histor of recent selected products
+        // show the history of recent selected products
         RecentProduct::create(['user_id' => $user_id, 'product_id' => $product_id]);
-
-        $product['user_name'] = 'ammar';
-        $product['user_profile_pic'] = 'ammar/asdjfals;./ asdf';
 
         $product['product'] = Product::where('id', $product_id)
         ->with("product_images")
-        ->with('business')
+        ->with('business', function($business){
+            $business->with('user', function($query){
+                $query->select('id', 'name', 'profile_pic');
+            });
+        })
         ->first();
 
-        $user = null;
-        $business_id = $product['product']['business_id'];
-        $user = Business::where('user_id', $user_id)->with("user")->get();
-
-
-        print_r($user);
-
-        return;
-
-        $product['user_name'] = $product['product']['business_id'];
-        $product['user_profile_pic'] = 'ammar/asdjfals;./ asdf';
         $product['related_product'] = $this->get_related_product();
 
 
         if ($product == null) {
             return $this->general_error_with("No product found");
         } else {
-            // $product_images = ProductImages::where('product_id', $product->id)->get();
-            // $product['image'] = $product_images;
 
             return response()->json([
                 'message' => 'Product found successfully',
