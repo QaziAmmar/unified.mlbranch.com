@@ -69,7 +69,7 @@ class ProductController extends Controller
         ->with("product_images")
         ->with('business', function($business){
             $business->with('user', function($query){
-                $query->select('id', 'name', 'profile_pic');
+                $query->select('id', 'name', 'profile_pic', 'firebase_id');
             });
         })
         ->first();
