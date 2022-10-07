@@ -54,7 +54,8 @@ class HomeController extends Controller
             ->with("post_psbs")
             ->with("profile_sub_images")
             ->with("education", function($query) use ($cites){
-                $query->orWhere('city', $cites);
+                $query->with('institute')
+                ->orWhere('city', $cites);
             })
             // ->where('education.city', 'like', '%' . 'Lahore' . '%')
             // ->where('institute_id', 'like', '%' . $user->institute_id . '%')

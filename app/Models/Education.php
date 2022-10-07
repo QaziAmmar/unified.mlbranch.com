@@ -9,6 +9,11 @@ class Education extends Model
 {
     use HasFactory;
 
+    public function institute()
+    {
+        return $this->belongsTo(Institute::class)->select(['id', 'name']);
+    }
+
     protected $fillable = [
         'user_id',
         'institute_id',
