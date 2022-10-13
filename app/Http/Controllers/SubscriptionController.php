@@ -170,7 +170,7 @@ class SubscriptionController extends Controller
         $status['days'] = $days;
         if ($is_subscribed == false) {
             $status['is_subscribed'] = false;
-            $status['message'] = "No current active subscription";
+            $status['message'] = "No current active subscription first";
             $status['subscription'] = (object)[];
         }
         if (($days >= 0) &&  ($is_subscribed)) {
@@ -277,6 +277,7 @@ class SubscriptionController extends Controller
             $days = "+" . $days;
         }
         return $days;
+        
     }
 
     public function hours_count_from($created_at)

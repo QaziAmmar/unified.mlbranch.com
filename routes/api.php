@@ -47,6 +47,8 @@ Route::group([
     # code...
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/send_verify_otp', [AuthController::class, 'send_verify_otp']);
+    Route::post('/verify_account_otp', [AuthController::class, 'verify_account_otp']);
     Route::post('/generate_otp', [ForgotPasswordController::class, 'generate_otp']);
     Route::post('/verify_otp', [ForgotPasswordController::class, 'verify_otp']);
     Route::post('/create_password', [ForgotPasswordController::class, 'create_password']);
@@ -72,7 +74,7 @@ Route::group([
     Route::post('/add_education', [EditProfileController::class, 'add_education']);
     Route::post('/delete_education', [EditProfileController::class, 'delete_education']);
 
-    Route::post('/test', [EditProfileController::class, 'test']);
+    Route::get('/test', [EditProfileController::class, 'test']);
 });
 
 

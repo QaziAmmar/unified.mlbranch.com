@@ -499,6 +499,7 @@ class EditProfileController extends Controller
     {
 
         # code...
+        echo "test";
     }
 
 

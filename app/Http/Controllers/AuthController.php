@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Business;
 use App\Models\Education;
-use App\Models\Institute;
+use App\Mail\GenerateOTPMail;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Subscription;
 use App\Models\Suggestion;
 use Illuminate\Http\Request;
@@ -153,5 +154,110 @@ class AuthController extends Controller
             ]
         ];
         return response()->json($data, 200);
+    }
+
+
+    public function send_verify_otp(Request $request)
+    {
+
+        # code...
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+            'user_id' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Unable to send the OTP',
+                'data' => $validator->errors()
+            ], 200);
+        }
+
+        // fetching email from user
+        $user_id = request(['user_id']);
+        $email = request(['email']);
+
+        // generating random number
+        $digits = 4;
+        $otp_code = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
+
+        $status = User::where('id', $user_id)->update(['email_code' => $otp_code]);
+        
+        // check either user exist in the databse of not.
+        if ($status) {
+
+            // send email to this Email Address
+            // adding some commet 
+            $main_data = ['message' => 'Unified Account Verification Code '. $otp_code ];
+            Mail::to($email)->send(new GenerateOTPMail($main_data));
+
+            $data = [
+                'message' => 'Account Verification Code is sent Successfully',
+                'status' => true,
+                'data' => [
+                    'otp' => $otp_code
+                ]
+            ];
+
+            return response()->json($data, 200);
+        } else {
+
+            $data = [
+                'message' => 'No User id is Founeded in Database',
+                'status' => false,
+                'data' => (object)[]
+            ];
+
+            return response()->json($data, 401);
+        }
+    }
+
+    public function verify_account_otp(Request $request)
+    {
+
+        # code...
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|string',
+            'otp' => 'required|string|min:4'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error: incorrect or missing parameters',
+                'status' => false,
+                'data' => $validator->errors()
+            ], 401);
+        }
+
+
+        // fetching email from user
+        $user = User::where('id', request('user_id'))
+        ->where('email_code', request('otp'))->first();
+
+
+        if ($user != null) {
+
+            // this function will remove the null values form the response.
+            
+            $user->verified = 1;
+            $user->email_code = 0;
+            $user->save();
+            $data = [
+                'message' => 'Accounct verified',
+                'status' => true,
+                'data' => (object)[]
+            ];
+
+            return response()->json($data, 200);
+        } else {
+
+            $data = [
+                'message' => 'Incorrect OTP ',
+                'status' => false,
+                'data' => (object)[]
+            ];
+
+            return response()->json($data, 401);
+        }
     }
 }
