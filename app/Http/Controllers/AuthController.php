@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\User_profile_images;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -157,13 +158,14 @@ class AuthController extends Controller
     }
 
 
-    public function send_verify_otp(Request $request)
+    public function verify_account(Request $request)
     {
 
         # code...
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'user_id' => 'required|string',
+            'document_img' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -174,8 +176,17 @@ class AuthController extends Controller
         }
 
         // fetching email from user
-        $user_id = request(['user_id']);
-        $email = request(['email']);
+        $user_id = request('user_id');
+        $email = request('email');
+        
+        // Save document picture on server by the id for user.
+
+         // decode the base64 image
+         $base64File = request('document_img');
+         $fileData = base64_decode($base64File);
+         $name = 'users_doc/' . $user_id . '.png';
+         Storage::put('public/' . $name, $fileData);
+         
 
         // generating random number
         $digits = 4;
@@ -192,7 +203,7 @@ class AuthController extends Controller
             Mail::to($email)->send(new GenerateOTPMail($main_data));
 
             $data = [
-                'message' => 'Account Verification Code is sent Successfully',
+                'message' => 'You account will be verified by admin soon',
                 'status' => true,
                 'data' => [
                     'otp' => $otp_code
@@ -212,52 +223,52 @@ class AuthController extends Controller
         }
     }
 
-    public function verify_account_otp(Request $request)
-    {
+    // public function verify_account_otp(Request $request)
+    // {
 
-        # code...
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|string',
-            'otp' => 'required|string|min:4'
-        ]);
+    //     # code...
+    //     $validator = Validator::make($request->all(), [
+    //         'user_id' => 'required|string',
+    //         'otp' => 'required|string|min:4'
+    //     ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error: incorrect or missing parameters',
-                'status' => false,
-                'data' => $validator->errors()
-            ], 401);
-        }
-
-
-        // fetching email from user
-        $user = User::where('id', request('user_id'))
-        ->where('email_code', request('otp'))->first();
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'message' => 'Error: incorrect or missing parameters',
+    //             'status' => false,
+    //             'data' => $validator->errors()
+    //         ], 401);
+    //     }
 
 
-        if ($user != null) {
+    //     // fetching email from user
+    //     $user = User::where('id', request('user_id'))
+    //     ->where('email_code', request('otp'))->first();
 
-            // this function will remove the null values form the response.
+
+    //     if ($user != null) {
+
+    //         // this function will remove the null values form the response.
             
-            $user->verified = 1;
-            $user->email_code = 0;
-            $user->save();
-            $data = [
-                'message' => 'Accounct verified',
-                'status' => true,
-                'data' => (object)[]
-            ];
+    //         $user->verified = 1;
+    //         $user->email_code = 0;
+    //         $user->save();
+    //         $data = [
+    //             'message' => 'Accounct verified',
+    //             'status' => true,
+    //             'data' => (object)[]
+    //         ];
 
-            return response()->json($data, 200);
-        } else {
+    //         return response()->json($data, 200);
+    //     } else {
 
-            $data = [
-                'message' => 'Incorrect OTP ',
-                'status' => false,
-                'data' => (object)[]
-            ];
+    //         $data = [
+    //             'message' => 'Incorrect OTP ',
+    //             'status' => false,
+    //             'data' => (object)[]
+    //         ];
 
-            return response()->json($data, 401);
-        }
-    }
+    //         return response()->json($data, 401);
+    //     }
+    // }
 }
