@@ -99,7 +99,7 @@ class FriendController extends Controller
         $block_list = Friend::where('user_id', $user_id)
             ->join('users', 'friends.friend_id', '=', 'users.id')
             ->where('friends.block', 1)
-            ->select('friends.id', 'friends.user_id', 'friends.block', 'friends.friend_id', 'users.profile_pic')
+            ->select('friends.id', 'friends.user_id', 'friends.block', 'friends.friend_id', 'users.profile_pic', 'users.name')
             ->get();
 
 

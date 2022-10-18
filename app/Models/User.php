@@ -89,9 +89,9 @@ class User extends Authenticatable
         'interstes' => 'array',
     ];
 
-    public function getProfilePicAttribute($value)
-    {
-        $value = asset('storage/' . $value);
-        return $value;
-    }
+    // public function getProfilePicAttribute($value)
+    // {
+    //     $value = asset('storage/' . $value);
+    //     return $value;
+    // }
 }
